@@ -133,7 +133,7 @@ const LoginForm: FC = () => {
         <Space size="large" style={{ marginBottom: '20px', width: '100%' }}>
           <Avatar src={logo} size="large" />
           {!firstLogin ? (
-            <h1 className="title_login">FILA ADMIN</h1>
+            <h1 className="title_login">FILA Sales Portal</h1>
           ) : (
             <p>Thay đổi mật khẩu khi bạn đăng nhập lần đầu</p>
           )}
