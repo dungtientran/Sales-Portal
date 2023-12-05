@@ -20,19 +20,16 @@ export const loginAsync = async (payload: any) => {
       });
 
       if (data.code == 200 && data.force_change_password) {
+        // xử lí đăng nhập lần đầu
         return {
           isFirtLogin: true,
           Session: data?.data?.Session,
           email: payload?.username,
         };
-        // xử lí đăng nhập lần đầu
       } else if (data.code == 200) {
-        // console.log('login ................ > ');
+        console.log('data_____________________', data);
 
-        // if()
-        console.log('data_____________login', data);
-
-        if (data.user.role.id === 'sale' && data.user.SaleLevel.level >= 1) {
+        if (data.user.SaleLevel.level >= 1) {
           localStorage.setItem('token', data.token.AccessToken);
           localStorage.setItem('rf-token', data.token.RefreshToken);
           localStorage.setItem('user', JSON.stringify(data.user));
@@ -44,16 +41,17 @@ export const loginAsync = async (payload: any) => {
               user: data.user,
             }),
           );
+
+          return {
+            success: true,
+            message: 'Đăng nhập thành công!',
+          };
         } else {
           notification.error({
             message: 'Bạn không có quyền truy cập ',
           });
+          localStorage.clear();
         }
-
-        return {
-          success: true,
-          message: 'Đăng nhập thành công!',
-        };
       }
     } catch (error: any) {
       return {

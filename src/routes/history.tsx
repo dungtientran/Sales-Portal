@@ -3,8 +3,6 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Router } from 'react-router-dom';
 
-import { getSubscriptions } from '@/stores/subscriptions/subscriptions.action';
-
 export const history = createBrowserHistory();
 
 interface HistoryRouterProps {

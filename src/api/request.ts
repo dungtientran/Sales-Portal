@@ -61,30 +61,30 @@ axiosInstance.interceptors.response.use(
       }),
     );
 
-    if (error.response?.data.message == TOKEN_EXPIRED_MESSAGE) {
-      try {
-        console.log('use refresh token');
-        const res = await axiosInstance.post('/admin/refresh_token');
-        const token = res.data.token.AccessToken;
+    // if (error.response?.data.message == TOKEN_EXPIRED_MESSAGE) {
+    //   try {
+    //     console.log('use refresh token');
+    //     const res = await axiosInstance.post('/admin/refresh_token');
+    //     const token = res.data.token.AccessToken;
 
-        localStorage.setItem('token', token);
-        const retrying_request = await axiosInstance(error.config);
+    //     localStorage.setItem('token', token);
+    //     const retrying_request = await axiosInstance(error.config);
 
-        return retrying_request;
-      } catch (error: any) {
-        console.log('rf token error: ' + error.message);
-        localStorage.removeItem('token');
-        localStorage.removeItem('rftoken');
-        window.location.href = '/login';
-      }
-    } else if (error.response?.data.message == INVALID_ACCESS_TOKEN) {
-      console.log(1122, error);
-      localStorage.removeItem('token');
-      localStorage.removeItem('rftoken');
-      window.location.href = '/login';
-    } else {
-      throw new Error(error.response?.data.message || error.message || error.response?.data);
-    }
+    //     return retrying_request;
+    //   } catch (error: any) {
+    //     console.log('rf token error: ' + error.message);
+    //     localStorage.removeItem('token');
+    //     localStorage.removeItem('rftoken');
+    //     window.location.href = '/login';
+    //   }
+    // } else if (error.response?.data.message == INVALID_ACCESS_TOKEN) {
+    //   console.log(1122, error);
+    //   localStorage.removeItem('token');
+    //   localStorage.removeItem('rftoken');
+    //   window.location.href = '/login';
+    // } else {
+    //   throw new Error(error.response?.data.message || error.message || error.response?.data);
+    // }
   },
 );
 

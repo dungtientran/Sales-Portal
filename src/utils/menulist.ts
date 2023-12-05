@@ -1,14 +1,14 @@
 import type { MenuList } from '@/interface/layout/menu.interface';
 
 export const menuListHandle: MenuList = [
+  // {
+  //   code: 'dashboard',
+  //   icon: 'dashboard',
+  //   label: { zh_CN: '首页', en_US: 'Dashboard' },
+  //   path: '/dashboard',
+  // },
   {
-    code: 'dashboard',
-    icon: 'dashboard',
-    label: { zh_CN: '首页', en_US: 'Dashboard' },
-    path: '/dashboard',
-  },
-  {
-    code: 'product-managament',
+    code: 'team-managament',
     icon: 'product',
     label: {
       en_US: 'Quản lý đội nhóm',
@@ -22,7 +22,7 @@ export const menuListHandle: MenuList = [
           en_US: 'Danh sách nhân viên',
           zh_CN: '基本',
         },
-        path: '/product-managament/list-of-stocks',
+        path: '/team-managament/list-of-employee',
       },
       {
         code: 'service-pack',
@@ -30,12 +30,12 @@ export const menuListHandle: MenuList = [
           en_US: 'Hoa hồng thành viên',
           zh_CN: '基本',
         },
-        path: '/product-managament/service-pack',
+        path: '/team-managament/membership-commission',
       },
     ],
   },
   {
-    code: 'signal',
+    code: 'customer-management',
     icon: 'notification',
     label: {
       en_US: 'Quản lý khách hàng',

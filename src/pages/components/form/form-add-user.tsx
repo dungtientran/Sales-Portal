@@ -15,7 +15,7 @@ const { Option } = Select;
 
 interface ICreateUser {
   initForm?: any;
-  setSaleCustomer: (sale: any) => void;
+  setSaleCustomer?: (sale: any) => void;
   useCustomer: () => {
     create: UseMutationResult<any, unknown, any, unknown>;
     update: UseMutationResult<any, unknown, any, unknown>;

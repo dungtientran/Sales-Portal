@@ -15,13 +15,8 @@ const NotFound = lazy(() => import('@/pages/404'));
 
 // Product Management
 
-const ListOfStocks = lazy(() => import('@/pages/ProductManagement/ListOfStocks/ListOfStocks'));
-const CreateSignal = lazy(() => import('@/pages/Signal/CreateSignal'));
-const ApproveAndCreateSignal = lazy(() => import('@/pages/Signal/ApproveAndCreateSignal'));
-const ServicePack = lazy(() => import('@/pages/ProductManagement/ServicePack/ServicePack'));
-const Recommendations = lazy(() => import('@/pages/ProductManagement/Recommendations/Recommendations'));
-const GroupList = lazy(() => import('@/pages/Group/GroupTablePage'));
-const GroupDetail = lazy(() => import('@/pages/Group/GroupDetailPage'));
+const ListOfEmployee = lazy(() => import('@/pages/TeamManagement/ListOfEmployee/ListOfEmployee'));
+const MembershipCommission = lazy(() => import('@/pages/TeamManagement/MembershipCommission/MembershipCommission'));
 
 const CustomerGroup = lazy(() => import('@/pages/CustomerManagement/CustomerGroup/CustomerGroup'));
 const ListCustomers = lazy(() => import('@/pages/CustomerManagement/ListCustomers/ListCustomers'));
@@ -59,35 +54,13 @@ const routeList: RouteObject[] = [
         path: 'dashboard',
         element: <WrapperRouteComponent element={<Dashboard />} titleId="title.dashboard" />,
       },
-      // product management
       {
-        path: 'product-managament/list-of-stocks',
-        element: <WrapperRouteComponent element={<ListOfStocks />} titleId="Danh mục cổ phiếu" />,
+        path: '/team-managament/list-of-employee',
+        element: <WrapperRouteComponent element={<ListOfEmployee />} titleId="Danh sách nhân viên" />,
       },
       {
-        path: 'product-managament/service-pack',
-        element: <WrapperRouteComponent element={<ServicePack />} titleId="Gói dịch vụ" />,
-      },
-      {
-        path: 'signal/recommendations',
-        element: <WrapperRouteComponent element={<Recommendations />} titleId="Khuyến nghị" />,
-      },
-      {
-        path: 'signal/create',
-        element: <WrapperRouteComponent element={<CreateSignal />} titleId="Khuyến nghị" />,
-      },
-      {
-        path: '/signal/create-and-approve',
-        element: <WrapperRouteComponent element={<ApproveAndCreateSignal />} titleId="Duyệt/ Tạo Khuyến nghị" />,
-      },
-      //
-      {
-        path: 'customer-management/customer-group',
-        element: <WrapperRouteComponent element={<GroupList />} titleId="Nhóm khách hàng" />,
-      },
-      {
-        path: 'customer-management/customer-group/detail/:id',
-        element: <WrapperRouteComponent element={<GroupDetail />} titleId="Chi tiết nhóm khách hàng" />,
+        path: '/team-managament/membership-commission',
+        element: <WrapperRouteComponent element={<MembershipCommission />} titleId="Hoa hồng thành viên" />,
       },
       {
         path: 'customer-management/list-customer',

@@ -25,7 +25,7 @@ const TagsViewAction: FC = () => {
 
   const closeOther = () => {
     dispatch(removeAllTag());
-    navigate('/dashboard');
+    // navigate('/dashboard');
   };
 
   return (
@@ -54,11 +54,11 @@ const TagsViewAction: FC = () => {
             key: '3',
             type: 'divider',
           },
-          {
-            key: '4',
-            onClick: () => navigate('/dashboard'),
-            label: <LocaleFormatter id="tagsView.operation.dashboard" />,
-          },
+          // {
+          //   key: '4',
+          //   onClick: () => navigate('/dashboard'),
+          //   label: <LocaleFormatter id="tagsView.operation.dashboard" />,
+          // },
         ],
       }}
     >

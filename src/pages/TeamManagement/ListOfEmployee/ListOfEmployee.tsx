@@ -38,7 +38,7 @@ interface TableParams {
 }
 type DataIndex = keyof DataType;
 
-const Recommendations: React.FC = () => {
+const ListOfEmployee: React.FC = () => {
   const queryClient = useQueryClient();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [urlLogo, setUrlLogo] = useState<string>('');
@@ -60,7 +60,7 @@ const Recommendations: React.FC = () => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['getListStock', tableParams, sort, searchText],
-    queryFn: () => getStockList(qs.stringify(getRandomuserParams(tableParams)), sort, searchText),
+    queryFn: () => getStockList(),
   });
   const getRandomuserParams = (params: TableParams) => ({
     size: params.pagination?.pageSize,
@@ -236,7 +236,7 @@ const Recommendations: React.FC = () => {
 
   const getExcelData = async (limit: string) => {
     try {
-      const res = await getStockList(`page=1&size=${limit}`, sort, searchText);
+      const res = await getStockList();
 
       setExcelData(res?.data?.rows);
     } catch (error) {
@@ -256,7 +256,7 @@ const Recommendations: React.FC = () => {
         },
       });
 
-      getExcelData(data?.data?.count);
+      // getExcelData(data?.data?.count);
       setListStock(data?.data?.rows);
     }
   }, [data]);
@@ -267,7 +267,7 @@ const Recommendations: React.FC = () => {
 
   return (
     <div className="aaa">
-      <HeadTitle title="Danh mục cổ phiếu" />
+      <HeadTitle title="Danh sách nhân viên" />
       <Button onClick={handleReset}>Reset bộ lọc</Button>
       <Result total={data?.data?.count} columns={columns} dataSource={excelData} title="Danh mục cổ phiếu" />
       <div className="table_stock">
@@ -288,4 +288,4 @@ const Recommendations: React.FC = () => {
   );
 };
 
-export default Recommendations;
+export default ListOfEmployee;

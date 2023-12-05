@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { ColumnListCustomerType, DataType, TableParams } from './index.interface';
+import type { DataIndex, DataType, TableParams } from './index.interface';
+import type { InputRef } from 'antd';
+import type { ColumnsType, ColumnType, FilterConfirmProps } from 'antd/es/table/interface';
 
 import './index.less';
 
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined, UserAddOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Drawer, message, notification, Table } from 'antd';
+import { Avatar, Button, Drawer, Input, message, notification, Popconfirm, Space, Table, Typography } from 'antd';
 import qs from 'qs';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Highlighter from 'react-highlight-words';
 
 import { listCustomerApi } from '@/api/ttd_list_customer';
+import user from '@/assets/logo/user.png';
 import BoxFilterListCustomer from '@/pages/components/box-filter/BoxFilterListCustomer';
 import ExportExcel from '@/pages/components/button-export-excel/ExportExcel';
 import CreateUser from '@/pages/components/form/form-add-user';
@@ -18,7 +22,24 @@ import Result from '@/pages/components/result/Result';
 
 import { Column } from './columns';
 
+const { Text, Link } = Typography;
+
 const { getListCustomer, createCustomer, addSaleCustomer, removeSaleCustomer } = listCustomerApi;
+
+// interface DataType {
+//   id: string;
+//   avatar_url: string;
+//   fullname: string;
+//   email: string;
+//   customer_code: string;
+//   phone_number: string;
+//   subscription_product: string;
+//   nav: number | null;
+//   sale_name: string | undefined;
+//   day_remaining: number;
+// }
+
+// type DataIndex = keyof DataType;
 
 const ListCustomers: React.FC = () => {
   const queryClient = useQueryClient();
@@ -31,31 +52,25 @@ const ListCustomers: React.FC = () => {
       pageSizeOptions: ['10', '20', '50'],
     },
   });
-  const [sort, setSort] = useState<string>('');
-  const [searchText, setSearchText] = useState({});
   const [queryFilter, setQuerFilter] = useState('');
-  const [searchedColumn, setSearchedColumn] = useState('');
   const [listCustomer, setListCustomer] = useState([]);
-  const [sale, setSale] = useState<any>();
 
   const [customerSelect, setCustomerSelect] = useState<any>();
-  const [customer_id, setCustomer_id] = useState<string>('');
 
   const [dataExcel, setDataExcel] = useState([]);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['getListCustomer', tableParams, queryFilter, searchText, sort],
-    queryFn: () =>
-      getListCustomer(qs.stringify(getRandomuserParams(tableParams)), qs.stringify(searchText), queryFilter, sort),
+    queryKey: ['getListCustomer'],
+    queryFn: () => getListCustomer(),
   });
 
   const getExcelData = async (limit: string) => {
     try {
-      const res = await getListCustomer(` page=1&size=${limit}`, qs.stringify(searchText), queryFilter, sort);
+      const res = await getListCustomer();
 
       if (res?.code === 200) {
-        const columnsExcel = res?.data?.rows?.map((item: DataType) => {
-          const column: ColumnListCustomerType = {
+        const columnsExcel = res?.data?.rows?.map((item: any) => {
+          const column = {
             avatar_url: item?.avatar_url,
             customer_code: item?.customer_code,
             email: item?.email,
@@ -82,12 +97,6 @@ const ListCustomers: React.FC = () => {
       message.error('Lỗi server');
     }
   };
-
-  const getRandomuserParams = (params: TableParams) => ({
-    size: params.pagination?.pageSize,
-    page: params.pagination?.current,
-    subscriptions: params.filters?.subscription_product?.join(','),
-  });
 
   const useCustomer = () => {
     const create = useMutation(createCustomer, {
@@ -133,26 +142,7 @@ const ListCustomers: React.FC = () => {
     setOpen(false);
   };
 
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-    setTableParams({
-      pagination,
-      filters,
-      ...sorter,
-    });
-
-    if (sorter.order === 'ascend') {
-      const sorte = `${sorter.field}_order=ASC`;
-
-      setSort(sorte);
-    } else if (sorter.order === 'descend') {
-      const sorte = `${sorter.field}_order=DESC`;
-
-      setSort(sorte);
-    }
-  };
-
   const handleClearFilter = () => {
-    setSearchText({});
     setQuerFilter('');
     setTableParams({
       pagination: {
@@ -173,22 +163,38 @@ const ListCustomers: React.FC = () => {
           total: data?.data?.count,
         },
       });
-      const columns = data?.data?.rows?.map((item: DataType) => {
-        const column: ColumnListCustomerType = {
+      const columns = data?.data?.rows?.map((item: any) => {
+        const column = {
           avatar_url: item?.avatar_url,
           customer_code: item?.customer_code,
           email: item?.email,
-          nav: item?.CaculatorHistories?.expected_amount,
+          nav: item?.nav,
           fullname: item?.fullname,
           id: item?.id,
           phone_number: item?.phone_number,
-          day_remaining: item?.remaining_subscription_day,
+          day_remaining: item?.remaining_subscription_day || 0,
           sale_name: item?.careby?.sale?.fullname,
           subscription_product: item?.subscription?.subscription_product?.name,
         };
 
         return column;
       });
+
+      for (let i = 0; i < 100; i++) {
+        columns.push({
+          avatar_url:
+            'https://merriam-webster.com/assets/mw/images/gallery/gal-wap-slideshow-slide/image2111165829-4503-95527072b83af590b6fe9c388e7e06c2@1x.jpg',
+          customer_code: `000${i}`,
+          day_remaining: `${i}`,
+          email: `mailfake${i}@gmail.com`,
+          fullname: `fake ${i}`,
+          id: `${i}`,
+          nav: `32${i}`,
+          phone_number: `0123456${i}`,
+          sale_name: `name fake ${i}`,
+          subscription_product: '',
+        });
+      }
       // const columnsExcel = excelData.data?.data?.rows?.map((item: DataType) => {
       //   const column: ColumnListCustomerType = {
       //     avatar_url: item?.avatar_url,
@@ -214,8 +220,6 @@ const ListCustomers: React.FC = () => {
     }
   }, [data]);
 
-  // console.log('excelData_____________', dataExcel);
-
   useEffect(() => {
     if (isLoading) setDataExcel([]);
   }, [isLoading]);
@@ -233,21 +237,15 @@ const ListCustomers: React.FC = () => {
         clearFilter={handleClearFilter}
         setTableParams={setTableParams}
       />
-      <Result
-        total={data?.data?.count}
-        searchText={searchedColumn}
-        columns={Column(setSearchText, setOpen, setCustomerSelect, useCustomer)}
-        dataSource={dataExcel}
-        title="Danh sách khách hàng"
-      />
+      <Result total={data?.data?.count} columns={Column()} dataSource={dataExcel} title="Danh sách khách hàng" />
       <div className="table_list_customer">
         <Table
-          columns={Column(setSearchText, setOpen, setCustomerSelect, useCustomer)}
+          columns={Column()}
           rowKey={record => record.id}
           dataSource={listCustomer}
-          pagination={tableParams.pagination}
+          // pagination={tableParams.pagination}
           // loading={isLoading}
-          onChange={handleTableChange}
+          // onChange={handleTableChange}
           scroll={{ x: 'max-content', y: '100%' }}
         />
       </div>
@@ -258,7 +256,7 @@ const ListCustomers: React.FC = () => {
         open={open}
         bodyStyle={{ paddingBottom: 80 }}
       >
-        <CreateUser initForm={customerSelect} setSaleCustomer={setSale} useCustomer={useCustomer} />
+        <CreateUser initForm={customerSelect} useCustomer={useCustomer} />
       </Drawer>
     </div>
   );

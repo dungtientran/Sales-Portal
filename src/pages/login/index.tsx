@@ -75,7 +75,7 @@ const LoginForm: FC = () => {
 
       if (res?.success) {
         const search = formatSearch(location.search);
-        const from = search.from || { pathname: '/' };
+        const from = search.from || { pathname: '/customer-management/list-customer' };
 
         if (form.remember) {
           encryptCredentials(form.username, form.password);
@@ -86,6 +86,7 @@ const LoginForm: FC = () => {
         notification.success({
           message: res.message,
         });
+
         navigate(from);
       } else if (res?.isFirtLogin) {
         setFirstLogin(true);

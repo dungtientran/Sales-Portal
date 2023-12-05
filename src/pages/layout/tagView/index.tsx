@@ -37,7 +37,6 @@ const TagsView: FC = () => {
     dispatch(removeTag(targetKey));
   };
 
-  console.log('_____________location', location.pathname);
   const setCurrentTag = useCallback(
     (id?: string) => {
       const tag = tags.find(item => {
@@ -55,7 +54,6 @@ const TagsView: FC = () => {
     [dispatch, location.pathname, tags],
   );
 
-  console.log('tabg_______________', tags);
   useEffect(() => {
     if (menuList.length) {
       const menu = menuList.find(m => m.path === location.pathname);

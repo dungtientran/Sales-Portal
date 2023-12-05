@@ -1,8 +1,8 @@
 import { axiosInstance } from './request';
 
 export const listCustomerApi = {
-  getListCustomer(param: string, searchText: string, queryFilter: string, sort: string): Promise<any> {
-    return axiosInstance.get(`/admin/customer/list?${sort}&${param}&${searchText}&${queryFilter}`);
+  getListCustomer(): Promise<any> {
+    return axiosInstance.get(`/user/sale/customer`);
   },
   createCustomer(newUser: any): Promise<any> {
     return axiosInstance.post('/admin/customer/create', newUser);
@@ -31,5 +31,4 @@ export const listCustomerApi = {
   deleteCustomerSupport(ticket_id: string): Promise<any> {
     return axiosInstance.delete(`/admin/customer/support/ticket/${ticket_id}`);
   },
-  
 };

@@ -35,7 +35,7 @@ const LayoutPage: FC = () => {
 
   useEffect(() => {
     const code = getFirstPathCode(location.pathname);
-    console.log("code__________________", code);
+
     setOpenkey(code);
     setSelectedKey(location.pathname);
   }, [location.pathname]);
@@ -79,11 +79,6 @@ const LayoutPage: FC = () => {
 
   useEffect(() => {
     fetchMenuList();
-    // dispatch(
-    //   setUserItem({
-    //     menuList: initMenuListAll(menuListHandle),
-    //   }),
-    // );
   }, [fetchMenuList]);
 
   useEffect(() => {
@@ -99,14 +94,11 @@ const LayoutPage: FC = () => {
         }),
       );
     };
-    // console.log("deviceeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
   }, [dispatch]);
 
   useEffect(() => {
     newUser;
   }, [newUser]);
-  // console.log('menuListHandle', menuListHandle);
-  // console.log('initMenuListAll', initMenuListAll(menuListHandle));
 
   return (
     <Layout className="layout-page">
