@@ -7,13 +7,11 @@ import './index.less';
 
 import { PlusOutlined, SearchOutlined, UserAddOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Avatar, Button, Drawer, Input, message, notification, Popconfirm, Space, Table, Typography } from 'antd';
-import qs from 'qs';
-import { useEffect, useRef, useState } from 'react';
-import Highlighter from 'react-highlight-words';
+import { Button, Drawer, message, Table } from 'antd';
+import { type } from 'os';
+import { useEffect, useState } from 'react';
 
 import { listCustomerApi } from '@/api/ttd_list_customer';
-import user from '@/assets/logo/user.png';
 import BoxFilterListCustomer from '@/pages/components/box-filter/BoxFilterListCustomer';
 import ExportExcel from '@/pages/components/button-export-excel/ExportExcel';
 import CreateUser from '@/pages/components/form/form-add-user';
@@ -22,24 +20,15 @@ import Result from '@/pages/components/result/Result';
 
 import { Column } from './columns';
 
-const { Text, Link } = Typography;
+export type filterQueryType = {
+  day_remaining: number | undefined;
+  day_remaining_type: 'less' | 'max' | undefined;
+  nav_low: number | undefined;
+  nav_high: number | undefined;
+  careby: 'have' | 'no_have' | undefined;
+};
 
 const { getListCustomer, createCustomer, addSaleCustomer, removeSaleCustomer } = listCustomerApi;
-
-// interface DataType {
-//   id: string;
-//   avatar_url: string;
-//   fullname: string;
-//   email: string;
-//   customer_code: string;
-//   phone_number: string;
-//   subscription_product: string;
-//   nav: number | null;
-//   sale_name: string | undefined;
-//   day_remaining: number;
-// }
-
-// type DataIndex = keyof DataType;
 
 const ListCustomers: React.FC = () => {
   const queryClient = useQueryClient();
@@ -52,10 +41,20 @@ const ListCustomers: React.FC = () => {
       pageSizeOptions: ['10', '20', '50'],
     },
   });
-  const [queryFilter, setQuerFilter] = useState('');
+  const [queryFilter, setQuerFilter] = useState<filterQueryType>({
+    careby: undefined,
+    day_remaining: undefined,
+    day_remaining_type: undefined,
+    nav_high: undefined,
+    nav_low: undefined,
+  });
+  const [originalData, setOriginalData] = useState([]);
+
   const [listCustomer, setListCustomer] = useState([]);
 
   const [customerSelect, setCustomerSelect] = useState<any>();
+
+  const [total, setTotal] = useState<number>(0);
 
   const [dataExcel, setDataExcel] = useState([]);
 
@@ -143,7 +142,8 @@ const ListCustomers: React.FC = () => {
   };
 
   const handleClearFilter = () => {
-    setQuerFilter('');
+    // setQuerFilter({careby: ''});
+    setListCustomer(originalData);
     setTableParams({
       pagination: {
         current: 1,
@@ -215,6 +215,8 @@ const ListCustomers: React.FC = () => {
 
       // setDataExcel(columnsExcel);
       setListCustomer(columns);
+      setOriginalData(columns);
+      setTotal(columns?.length);
       getExcelData(data?.data?.count as string);
       // setDataExcel();
     }
@@ -223,6 +225,30 @@ const ListCustomers: React.FC = () => {
   useEffect(() => {
     if (isLoading) setDataExcel([]);
   }, [isLoading]);
+
+  const filterData = (queryFilter: filterQueryType) => {
+    const { careby, day_remaining, day_remaining_type, nav_high, nav_low } = queryFilter;
+
+    return originalData.filter((item: DataType) => {
+      const navMatch =
+        nav_low && nav_high ? Number(item.nav) >= Number(nav_low) && Number(item.nav) <= Number(nav_high) : true;
+
+      const minDayMatch = day_remaining_type === 'less' && day_remaining ? item.day_remaining < day_remaining : true;
+      const maxDayMatch = day_remaining_type === 'max' && day_remaining ? item.day_remaining > day_remaining : true;
+
+      const careHaveByMatch = careby === 'have' ? Boolean(item.sale_name) : true;
+      const careDontHaveByMatch = careby === 'no_have' ? !item.sale_name : true;
+
+      return navMatch && minDayMatch && maxDayMatch && careHaveByMatch && careDontHaveByMatch;
+    });
+  };
+
+  useEffect(() => {
+    const resultFilterData = filterData(queryFilter);
+
+    setListCustomer(resultFilterData);
+    setTotal(resultFilterData?.length);
+  }, [queryFilter]);
 
   return (
     <div className="aaa">
@@ -237,7 +263,7 @@ const ListCustomers: React.FC = () => {
         clearFilter={handleClearFilter}
         setTableParams={setTableParams}
       />
-      <Result total={data?.data?.count} columns={Column()} dataSource={dataExcel} title="Danh sách khách hàng" />
+      <Result total={total} columns={Column()} dataSource={dataExcel} title="Danh sách khách hàng" />
       <div className="table_list_customer">
         <Table
           columns={Column()}

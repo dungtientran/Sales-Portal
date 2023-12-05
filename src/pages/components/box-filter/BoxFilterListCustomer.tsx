@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import type { TableParams } from '@/pages/CustomerManagement/ListCustomers/index.interface';
+import type { filterQueryType } from '@/pages/CustomerManagement/ListCustomers/ListCustomers';
 import type { Dispatch, SetStateAction} from 'react';
 
 import { Button, InputNumber, Radio, Select, Space, Typography } from 'antd';
@@ -10,7 +11,7 @@ const { Text } = Typography;
 const { Option } = Select;
 
 interface IBoxFilterListCustomer {
-  setQueryFiter: (query: string) => void;
+  setQueryFiter: (query: filterQueryType) => void;
   clearFilter: () => void;
   setTableParams:  Dispatch<SetStateAction<TableParams>>
 }
@@ -37,7 +38,8 @@ const BoxFilterListCustomer = ({ setQueryFiter, clearFilter,setTableParams }: IB
       careby: careby
     };
 
-    setQueryFiter(qs.stringify(queryFilter));
+    // setQueryFiter(qs.stringify(queryFilter));
+    setQueryFiter(queryFilter as filterQueryType);
     setTableParams({
       pagination: {
         current: 1
