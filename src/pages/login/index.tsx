@@ -75,7 +75,7 @@ const LoginForm: FC = () => {
 
       if (res?.success) {
         const search = formatSearch(location.search);
-        const from = search.from || { pathname: '/customer-management/list-customer' };
+        const from = '/customer-management/list-customer';
 
         if (form.remember) {
           encryptCredentials(form.username, form.password);
