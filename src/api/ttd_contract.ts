@@ -3,8 +3,8 @@ import axios from 'axios';
 import { axiosInstance } from './request';
 
 export const listContractApi = {
-  getListContract(params: string, queryFilter: string, searchText: string, sort: string): Promise<any> {
-    return axiosInstance.get(`/user/sale/contract?${params}&${queryFilter}&${searchText}&${sort}`);
+  getListContract(status: string): Promise<any> {
+    return axiosInstance.get(`/user/sale/contract?status=${status}`);
   },
   createContract(data: any): Promise<any> {
     return axiosInstance.post(`/admin/contract/create`, data);

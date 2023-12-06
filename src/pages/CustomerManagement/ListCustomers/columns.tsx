@@ -161,6 +161,8 @@ export const Column = () => {
       title: 'Nhân viên chăm, sóc',
       dataIndex: 'sale_name',
       width: '15%',
+      ...ColumnSearchProps('sale_name'),
+
       render: (_, record) => (
         <Space size="middle">
           {record.sale_name ? (

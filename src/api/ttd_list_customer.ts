@@ -2,7 +2,7 @@ import { axiosInstance } from './request';
 
 export const listCustomerApi = {
   getListCustomer(): Promise<any> {
-    return axiosInstance.get(`/user/sale/customer`);
+    return axiosInstance.get(`/user/sale/customer_of_lower_grade`);
   },
   createCustomer(newUser: any): Promise<any> {
     return axiosInstance.post('/admin/customer/create', newUser);

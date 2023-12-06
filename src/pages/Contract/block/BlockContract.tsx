@@ -47,9 +47,8 @@ const BlockContract: React.FC = () => {
   const [idDelete, setIdDelete] = useState<string>('');
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['getListContract', tableParams, queryFilter, searchText, sort],
-    queryFn: () =>
-      getListContract(qs.stringify(getRandomuserParams(tableParams)), queryFilter, qs.stringify(searchText), sort),
+    queryKey: ['getListContract'],
+    queryFn: () => getListContract('done'),
   });
 
   const update = useMutation({
@@ -116,6 +115,7 @@ const BlockContract: React.FC = () => {
     setSort('');
   };
 
+  console.log('Data___________________________', data);
   useEffect(() => {
     if (data) {
       setTableParams({
@@ -151,23 +151,13 @@ const BlockContract: React.FC = () => {
         };
       });
 
-      getListDataExcel(data?.data?.count);
-
-      // console.log('newArrData_____________________', newArrData);
-      // console.log(getDataExcep.data);
-
       setListCustomerSp(columndata);
     }
   }, [data]);
 
   const getListDataExcel = async (limit: number) => {
     try {
-      const res = await getListContract(
-        `status=done&page=1&size=${limit}`,
-        queryFilter,
-        qs.stringify(searchText),
-        sort,
-      );
+      const res = await getListContract('done');
 
       if (res?.code === 200) {
         const dataExcel = res?.data?.rows;

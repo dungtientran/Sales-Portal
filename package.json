@@ -24,6 +24,7 @@
     "axios": "^0.24.0",
     "bcryptjs": "^2.4.3",
     "crypto-js": "^4.2.0",
+    "date-fns": "^2.30.0",
     "dayjs": "^1.11.10",
     "driver.js": "^0.9.8",
     "exceljs": "^4.3.0",

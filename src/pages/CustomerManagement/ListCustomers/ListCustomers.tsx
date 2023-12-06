@@ -1,19 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { DataIndex, DataType, TableParams } from './index.interface';
-import type { InputRef } from 'antd';
-import type { ColumnsType, ColumnType, FilterConfirmProps } from 'antd/es/table/interface';
+import type { DataType, TableParams } from './index.interface';
 
 import './index.less';
 
-import { PlusOutlined, SearchOutlined, UserAddOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Drawer, message, Table } from 'antd';
-import { type } from 'os';
+import { Drawer, message, Table } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { listCustomerApi } from '@/api/ttd_list_customer';
 import BoxFilterListCustomer from '@/pages/components/box-filter/BoxFilterListCustomer';
-import ExportExcel from '@/pages/components/button-export-excel/ExportExcel';
 import CreateUser from '@/pages/components/form/form-add-user';
 import HeadTitle from '@/pages/components/head-title/HeadTitle';
 import Result from '@/pages/components/result/Result';
@@ -180,21 +175,6 @@ const ListCustomers: React.FC = () => {
         return column;
       });
 
-      for (let i = 0; i < 100; i++) {
-        columns.push({
-          avatar_url:
-            'https://merriam-webster.com/assets/mw/images/gallery/gal-wap-slideshow-slide/image2111165829-4503-95527072b83af590b6fe9c388e7e06c2@1x.jpg',
-          customer_code: `000${i}`,
-          day_remaining: `${i}`,
-          email: `mailfake${i}@gmail.com`,
-          fullname: `fake ${i}`,
-          id: `${i}`,
-          nav: `32${i}`,
-          phone_number: `0123456${i}`,
-          sale_name: `name fake ${i}`,
-          subscription_product: '',
-        });
-      }
       // const columnsExcel = excelData.data?.data?.rows?.map((item: DataType) => {
       //   const column: ColumnListCustomerType = {
       //     avatar_url: item?.avatar_url,
@@ -253,17 +233,17 @@ const ListCustomers: React.FC = () => {
   return (
     <div className="aaa">
       <HeadTitle title="Danh sách khách hàng" />
-      <div style={{ display: 'flex', textAlign: 'center', justifyContent: 'center' }}>
+      {/* <div style={{ display: 'flex', textAlign: 'center', justifyContent: 'center' }}>
         <Button onClick={showDrawer} type="primary">
           <PlusOutlined /> Tạo mới người dùng
         </Button>
-      </div>
+      </div> */}
       <BoxFilterListCustomer
         setQueryFiter={setQuerFilter}
         clearFilter={handleClearFilter}
         setTableParams={setTableParams}
       />
-      <Result total={total} columns={Column()} dataSource={dataExcel} title="Danh sách khách hàng" />
+      <Result total={total} columns={Column()} dataSource={listCustomer} title="Danh sách khách hàng" />
       <div className="table_list_customer">
         <Table
           columns={Column()}

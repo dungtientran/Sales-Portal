@@ -8,26 +8,29 @@ import './index.less';
 import { EditOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Input, Space, Tag, Typography } from 'antd';
 import moment from 'moment';
-import { Fragment, useRef } from 'react';
+import { Fragment, useRef, useState } from 'react';
+import Highlighter from 'react-highlight-words';
 
 const { Text } = Typography;
 
-export const ColumnSearchProps = (
-  dataIndex: DataIndex,
-  title: string,
-  setSearchQuery: (query: any) => void,
-): ColumnType<ColumnTyle> => {
+export const ColumnSearchPropss = (dataIndex: DataIndex): ColumnType<ColumnTyle> => {
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef<InputRef>(null);
 
-  const handleSearch = (selectedKeys: string, confirm: (param?: FilterConfirmProps) => void, dataIndex: DataIndex) => {
-    setSearchQuery((prev: any) => ({
-      ...prev,
-      [dataIndex]: selectedKeys,
-    }));
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: (param?: FilterConfirmProps) => void,
+    dataIndex: DataIndex,
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
   };
 
   const handleReset = (clearFilters: () => void) => {
     clearFilters();
+    setSearchText('');
   };
 
   return {
@@ -35,144 +38,142 @@ export const ColumnSearchProps = (
       <div style={{ padding: 8 }} onKeyDown={e => e.stopPropagation()}>
         <Input
           ref={searchInput}
-          placeholder={`Tìm kiếm ${title}`}
+          placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e => {
-            setSelectedKeys(e.target.value ? [e.target.value] : []);
-            handleSearch(e.target.value, confirm, dataIndex);
-          }}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
           style={{ marginBottom: 8, display: 'block' }}
         />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button onClick={() => clearFilters && handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
       </div>
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />,
+    onFilter: (value, record: any) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    render: text => text,
+    render: text =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
   };
 };
 
-export const Column = (
-  setSearchQuery: (query: string) => void,
-  setOpenDrawer: (isOpen: boolean) => void,
-  setCustomerSelect: (customer: any) => void,
-  deleteRequest: (id: string) => void,
-  setOpenModel: (open: boolean) => void,
-) => {
+export const Column = () => {
   const columns: ColumnsType<ColumnTyle> = [
     {
       title: 'Số hợp đồng',
       dataIndex: 'contract_no',
-      // render: (_, record) => <Text>{moment(record.created_at).format('DD/MM/YYYY')}</Text>,
       width: '5%',
-      ...ColumnSearchProps('contract_no', 'mã hợp đồng', setSearchQuery),
+      ...ColumnSearchPropss('contract_no'),
     },
     {
       title: 'Mã KH',
       dataIndex: 'customer_code',
       width: '6%',
-      // ...ColumnSearchProps('customer_code', 'mã KH', setSearchQuery),
+      ...ColumnSearchPropss('customer_code'),
     },
     {
       title: 'Tên KH',
       dataIndex: 'name',
       width: '8%',
-      // render: (_, record) => <Text>{record?.customer?.fullname}</Text>,
-
-      ...ColumnSearchProps('name', 'tên khách hàng', setSearchQuery),
+      ...ColumnSearchPropss('name'),
     },
     {
       title: 'SĐT',
-      // sorter: true,
       dataIndex: 'phone_number',
-      // width: '15%',
-      // render: (_, record) => <Text>{record?.customer?.phone_number}</Text>,
-
-      ...ColumnSearchProps('phone_number', 'số điện thoại', setSearchQuery),
+      ...ColumnSearchPropss('phone_number'),
     },
     {
       title: 'Email',
-      // sorter: true,
       dataIndex: 'email',
       width: '6%',
-      // render: (_, record) => <Text>{record?.customer?.email}</Text>,
-
-      ...ColumnSearchProps('email', 'email', setSearchQuery),
+      ...ColumnSearchPropss('email'),
     },
     {
       title: 'Mã nhân viên QL',
       dataIndex: 'staff_code',
       width: '8%',
-      // render: (_, record) => <Text>{record?.sale?.staff_code}</Text>,
-
-      ...ColumnSearchProps('staff_code', 'mã NVQL', setSearchQuery),
     },
     {
       title: 'Tên nhân viên QL',
       dataIndex: 'name_sale',
       width: '10%',
-      // render: (_, record) => <Text>{record?.sale?.fullname}</Text>,
-
-      ...ColumnSearchProps('name_sale', 'tên nhân viên QL', setSearchQuery),
+      ...ColumnSearchPropss('name_sale'),
     },
     {
       title: 'Ngày bắt đầu',
       dataIndex: 'start_date',
       width: '8%',
-      render: (_, record) => <Text>{moment(record?.start_date).format('DD/MM/YYYY')}</Text>,
-      sorter: true,
+      sorter: (a, b) => (new Date(a.start_date) < new Date(b.start_date) ? -1 : 1),
     },
     {
       title: 'Ngày kết thúc',
       dataIndex: 'end_date',
       width: '8%',
-      render: (_, record) => <Text>{moment(record?.end_date).format('DD/MM/YYYY')}</Text>,
-      sorter: true,
+      sorter: (a, b) => (new Date(a.end_date) < new Date(b.end_date) ? -1 : 1),
     },
     {
       title: 'Giá trị ban đầu',
       dataIndex: 'initial_value',
       width: '10%',
       render: (_, record) => <Text>{record?.initial_value?.toLocaleString()}</Text>,
-      sorter: true,
+      sorter: (a, b) => Number(a.initial_value) - Number(b.initial_value),
     },
     {
       title: 'Lợi nhuận % (dự kiến)',
       dataIndex: 'profit_percent',
       width: '8%',
       render: (_, record) => <Tag color={record?.profit_percent > 0 ? 'blue' : 'red'}>{record?.profit_percent}</Tag>,
-      sorter: true,
+      sorter: (a, b) => Number(a.profit_percent) - Number(b.profit_percent),
     },
     {
       title: 'Hoa hồng tạm tính (Fila)',
       dataIndex: 'commission',
-      width: '10%',
+      width: '16%',
       render: (_, record) => <Text>{record?.commission?.toLocaleString()}</Text>,
-      // sorter: true,
+      sorter: (a, b) => Number(a.commission) - Number(b.commission),
     },
-    // {
-    //   title: 'Tổng hoa hồng tạm tính (Fila)',
-    //   dataIndex: 'total_commission',
-    //   width: '12%',
-    //   render: (_, record) => <Text>{record?.total_commission?.toLocaleString()}</Text>,
-    // },
     {
       title: 'Tình trạng',
       dataIndex: 'status',
       width: '5%',
       render: (_, record) => <Tag color="#108ee9">{record?.status}</Tag>,
-      // render: (_, record) => (
-      //   <Fragment>
-      //     {record?.status === 'Đang có hiệu lực' ? (
-      //       <Tag color="#108ee9">Đang có hiệu lực</Tag>
-      //     ) : (
-      //       <Tag color="red">Đã thanh lý</Tag>
-      //     )}
-      //   </Fragment>
-      // ),
     },
     {
       title: '',
@@ -180,24 +181,10 @@ export const Column = (
       // width: '8%',
       render: (_, record) => (
         <Space size="small">
-          <Button
-            type="primary"
-            size="small"
-            onClick={() => {
-              setOpenDrawer(true);
-              setCustomerSelect(record);
-            }}
-          >
+          <Button type="primary" size="small" onClick={() => {}}>
             <EditOutlined />
           </Button>
-          <Button
-            type="primary"
-            size="small"
-            onClick={() => {
-              setCustomerSelect(record);
-              setOpenModel(true);
-            }}
-          >
+          <Button type="primary" size="small" onClick={() => {}}>
             <EyeOutlined />
           </Button>
         </Space>

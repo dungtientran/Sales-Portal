@@ -1,3 +1,4 @@
+import type { filterQueryType } from './InterestRate';
 import type { RadioChangeEvent } from 'antd';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 
@@ -10,7 +11,7 @@ const { Text } = Typography;
 const { Option } = Select;
 
 interface IBoxFilter {
-  setQueryFilter: (query: string) => void;
+  setQueryFilter: (query: filterQueryType) => void;
   handelResetFilter: () => void;
   handleSetPageOnFilter: () => void;
 }
@@ -53,7 +54,16 @@ const BoxFilter = ({ setQueryFilter, handelResetFilter, handleSetPageOnFilter }:
   // console.log('queryObj_______________', queryObj);
 
   const handleResetFilter = () => {
-    setQueryObj(undefined);
+    setQueryObj({
+      start_date: '',
+      end_date: '',
+      initial_value_from: '',
+      initial_value_to: '',
+      profit_percent_from: '',
+      profit_percent_to: '',
+      fila_commission_from: '',
+      fila_commission_to: '',
+    });
     // console.log(123456);
     setStatusContract('');
     handelResetFilter();
@@ -63,7 +73,7 @@ const BoxFilter = ({ setQueryFilter, handelResetFilter, handleSetPageOnFilter }:
   const handleFilter = () => {
     const querystring = qs.stringify(queryObj);
 
-    setQueryFilter(querystring);
+    setQueryFilter(queryObj);
     handleSetPageOnFilter();
   };
 
@@ -105,7 +115,7 @@ const BoxFilter = ({ setQueryFilter, handelResetFilter, handleSetPageOnFilter }:
           <Text strong>Ngày Hiệu lực:</Text>
         </div>
         <Space>
-          <RangePicker style={{ width: '328px' }} format="YYYY/MM/DD" onChange={onChange} value={selectedDates} />
+          <RangePicker style={{ width: '328px' }} format="DD/MM/YYYY" onChange={onChange} value={selectedDates} />
         </Space>
       </Space>
       <Space direction="vertical" size="middle">
