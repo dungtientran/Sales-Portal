@@ -60,6 +60,8 @@ const InterestRate: React.FC = () => {
   const [idDelete, setIdDelete] = useState<string>('');
   const [contractExists, setContractExists] = useState(false);
 
+  const [total, setTotal] = useState(0);
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['getListContractDone'],
     queryFn: () => getListContract('pending'),
@@ -143,6 +145,7 @@ const InterestRate: React.FC = () => {
 
       setListContract(columndata);
       setOriginalData(columndata);
+      setTotal(data?.data?.count);
     }
   }, [data]);
 
@@ -203,12 +206,12 @@ const InterestRate: React.FC = () => {
     });
   };
 
-  useEffect(() => {
+  const resultFilterData = (queryFilter: filterQueryType) => {
     const resultFilterData = filterData(queryFilter);
 
     setListContract(resultFilterData);
-    // setTotal(resultFilterData?.length);
-  }, [queryFilter]);
+    setTotal(resultFilterData?.length);
+  };
 
   return (
     <div className="aaa">
@@ -229,13 +232,9 @@ const InterestRate: React.FC = () => {
         setQueryFilter={setQueryFilter}
         handelResetFilter={handelResetFilter}
         handleSetPageOnFilter={handleSetPageOnFilter}
+        resultFilterData={resultFilterData}
       />
-      <Result
-        total={data?.data?.count}
-        columns={Column()}
-        dataSource={dataExcel}
-        title="Danh sách hợp đồng Vip (còn hiệu lực)"
-      />
+      <Result total={total} columns={Column()} dataSource={dataExcel} title="Danh sách hợp đồng Vip (còn hiệu lực)" />
       <div className="table_contract">
         <Table
           columns={Column()}

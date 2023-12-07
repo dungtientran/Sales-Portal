@@ -74,6 +74,8 @@ const ListOfEmployee: React.FC = () => {
     }
   }, [data]);
 
+  console.log('listCustomerSp_____________________________', listCustomerSp);
+
   return (
     <div className="aaa">
       <HeadTitle title="Danh sách quản trị viên" />

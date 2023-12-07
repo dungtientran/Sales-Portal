@@ -5,7 +5,7 @@ import { lazy } from 'react';
 import { Navigate } from 'react-router';
 import { useRoutes } from 'react-router-dom';
 
-import Dashboard from '@/pages/dashboard';
+// import Dashboard from '@/pages/dashboard';
 import LayoutPage from '@/pages/layout';
 import LoginPage from '@/pages/login';
 
@@ -50,10 +50,10 @@ const routeList: RouteObject[] = [
         path: '',
         element: <Navigate to="/team-managament/list-of-employee" />,
       },
-      {
-        path: 'dashboard',
-        element: <WrapperRouteComponent element={<Dashboard />} titleId="title.dashboard" />,
-      },
+      // {
+      //   path: 'dashboard',
+      //   element: <WrapperRouteComponent element={<Dashboard />} titleId="title.dashboard" />,
+      // },
       {
         path: '/team-managament/list-of-employee',
         element: <WrapperRouteComponent element={<ListOfEmployee />} titleId="Danh sách nhân viên" />,
