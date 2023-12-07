@@ -5,7 +5,17 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: TagState = {
   activeTagId: location.pathname,
-  tags: [],
+  tags: [
+    {
+      closable: false,
+      code: 'team-managament',
+      label: {
+        en_US: 'Danh sách nhân viên',
+        zh_CN: '首页',
+      },
+      path: '/team-managament/list-of-employee',
+    },
+  ],
 };
 
 const tagsViewSlice = createSlice({

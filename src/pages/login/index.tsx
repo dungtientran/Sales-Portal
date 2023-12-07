@@ -75,7 +75,7 @@ const LoginForm: FC = () => {
 
       if (res?.success) {
         const search = formatSearch(location.search);
-        const from = '/customer-management/list-customer';
+        const from = '/team-managament/list-of-employee';
 
         if (form.remember) {
           encryptCredentials(form.username, form.password);
@@ -154,6 +154,7 @@ const LoginForm: FC = () => {
             >
               <Input
                 type="email"
+                className="input_login_email"
                 placeholder={formatMessage({
                   id: 'gloabal.tips.username',
                 })}
@@ -171,13 +172,14 @@ const LoginForm: FC = () => {
               ]}
             >
               <Input.Password
+                className="input_login"
                 placeholder={formatMessage({
                   id: 'gloabal.tips.password',
                 })}
               />
             </Form.Item>
             <Form.Item name="remember" valuePropName="checked">
-              <Checkbox>
+              <Checkbox className="checkbox_login">
                 <LocaleFormatter id="gloabal.tips.rememberUser" />
               </Checkbox>
             </Form.Item>

@@ -149,63 +149,6 @@ const ListCustomers: React.FC = () => {
     });
   };
 
-  useEffect(() => {
-    if (data) {
-      setTableParams({
-        ...tableParams,
-        pagination: {
-          ...tableParams.pagination,
-          total: data?.data?.count,
-        },
-      });
-      const columns = data?.data?.rows?.map((item: any) => {
-        const column = {
-          avatar_url: item?.avatar_url,
-          customer_code: item?.customer_code,
-          email: item?.email,
-          nav: item?.nav,
-          fullname: item?.fullname,
-          id: item?.id,
-          phone_number: item?.phone_number,
-          day_remaining: item?.remaining_subscription_day || 0,
-          sale_name: item?.careby?.sale?.fullname,
-          subscription_product: item?.subscription?.subscription_product?.name,
-        };
-
-        return column;
-      });
-
-      // const columnsExcel = excelData.data?.data?.rows?.map((item: DataType) => {
-      //   const column: ColumnListCustomerType = {
-      //     avatar_url: item?.avatar_url,
-      //     customer_code: item?.customer_code,
-      //     email: item?.email,
-      //     nav: item?.CaculatorHistories?.expected_amount,
-      //     fullname: item?.fullname,
-      //     id: item?.id,
-      //     phone_number: item?.phone_number,
-      //     day_remaining: item?.remaining_subscription_day,
-      //     sale_name: item?.careby?.sale?.fullname,
-      //     subscription_product: item?.subscription?.subscription_product?.name,
-      //   };
-
-      //   return column;
-      // });
-      // console.log('columns__________________', columns);
-
-      // setDataExcel(columnsExcel);
-      setListCustomer(columns);
-      setOriginalData(columns);
-      setTotal(columns?.length);
-      getExcelData(data?.data?.count as string);
-      // setDataExcel();
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (isLoading) setDataExcel([]);
-  }, [isLoading]);
-
   const filterData = (queryFilter: filterQueryType) => {
     const { careby, day_remaining, day_remaining_type, nav_high, nav_low } = queryFilter;
 
@@ -223,12 +166,46 @@ const ListCustomers: React.FC = () => {
     });
   };
 
-  useEffect(() => {
+  const resultFilterData = (queryFilter: filterQueryType) => {
     const resultFilterData = filterData(queryFilter);
 
     setListCustomer(resultFilterData);
     setTotal(resultFilterData?.length);
-  }, [queryFilter]);
+  };
+
+  useEffect(() => {
+    if (data?.code === 200) {
+      setTableParams({
+        ...tableParams,
+        pagination: {
+          ...tableParams.pagination,
+          total: data?.data?.count,
+        },
+      });
+      const columns = data?.data?.rows?.map((item: any) => {
+        const column = {
+          avatar_url: item?.avatar_url,
+          customer_code: item?.customer_code,
+          email: item?.email,
+          nav: item?.nav,
+          fullname: item?.fullname,
+          id: item?.id,
+          phone_number: item?.phone_number,
+          day_remaining: item?.remaining_subscription_day || 0,
+          sale_name: item?.care_by?.fullname,
+          subscription_product: item?.subscription?.subscription_product?.name,
+        };
+
+        return column;
+      });
+
+      setListCustomer(columns);
+      setOriginalData(columns);
+      setTotal(columns?.length);
+      getExcelData(data?.data?.count as string);
+      // setDataExcel();
+    }
+  }, [data]);
 
   return (
     <div className="aaa">
@@ -242,6 +219,7 @@ const ListCustomers: React.FC = () => {
         setQueryFiter={setQuerFilter}
         clearFilter={handleClearFilter}
         setTableParams={setTableParams}
+        resultFilterData={resultFilterData}
       />
       <Result total={total} columns={Column()} dataSource={listCustomer} title="Danh sách khách hàng" />
       <div className="table_list_customer">
@@ -249,9 +227,6 @@ const ListCustomers: React.FC = () => {
           columns={Column()}
           rowKey={record => record.id}
           dataSource={listCustomer}
-          // pagination={tableParams.pagination}
-          // loading={isLoading}
-          // onChange={handleTableChange}
           scroll={{ x: 'max-content', y: '100%' }}
         />
       </div>

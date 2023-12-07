@@ -48,7 +48,7 @@ const routeList: RouteObject[] = [
     children: [
       {
         path: '',
-        element: <Navigate to="dashboard" />,
+        element: <Navigate to="/team-managament/list-of-employee" />,
       },
       {
         path: 'dashboard',

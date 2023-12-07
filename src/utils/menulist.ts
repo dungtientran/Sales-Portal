@@ -24,14 +24,14 @@ export const menuListHandle: MenuList = [
         },
         path: '/team-managament/list-of-employee',
       },
-      {
-        code: 'service-pack',
-        label: {
-          en_US: 'Hoa hồng thành viên',
-          zh_CN: '基本',
-        },
-        path: '/team-managament/membership-commission',
-      },
+      // {
+      //   code: 'service-pack',
+      //   label: {
+      //     en_US: 'Hoa hồng thành viên',
+      //     zh_CN: '基本',
+      //   },
+      //   path: '/team-managament/membership-commission',
+      // },
     ],
   },
   {

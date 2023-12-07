@@ -9,7 +9,7 @@ import { useState } from 'react';
 const { Text } = Typography;
 const { Option } = Select;
 
-interface IBoxFilterListCustomer {
+interface IBoxFilterListOfEmployee {
   setQueryFiter: (query: filterQueryType) => void;
   clearFilter: () => void;
   setTableParams: Dispatch<SetStateAction<TableParams>>;
@@ -21,7 +21,7 @@ const BoxFilterListCustomer = ({
   clearFilter,
   setTableParams,
   resultFilterData,
-}: IBoxFilterListCustomer) => {
+}: IBoxFilterListOfEmployee) => {
   const [daysRemaining, setDaysRemaining] = useState<number | undefined>(undefined);
   const [day_remaining_type, setDay_remaining_type] = useState<string>('less');
   const [nav_low, setNav_Low] = useState<number | undefined>(undefined);

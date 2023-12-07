@@ -1,48 +1,26 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import type { InputRef } from 'antd';
-import type { ColumnsType, ColumnType, TablePaginationConfig } from 'antd/es/table';
-import type { FilterConfirmProps, FilterValue } from 'antd/es/table/interface';
+import type { TableParams } from './index.interface';
 
 import './index.less';
 
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Avatar, Button, Input, message, Select, Skeleton, Space, Spin, Table, Tooltip, Typography } from 'antd';
+import { Button, Drawer, message, Table } from 'antd';
 import qs from 'qs';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { apiListStock } from '@/api/stock.api';
-import MyModal from '@/components/basic/modal';
-import MyUpLoad from '@/components/core/upload';
+import { listEmployeeApi } from '@/api/ttd_list_employee';
+import EditUserManagement from '@/pages/components/form/form-edit-user-manage';
 import HeadTitle from '@/pages/components/head-title/HeadTitle';
 import Result from '@/pages/components/result/Result';
 
-const { getStockList, updateLogoStock } = apiListStock;
+import { Column } from './columns';
 
-const LIMIT = Number(import.meta.env.VITE_PAGE_SIZE);
+const { getListEmployee } = listEmployeeApi;
 
-interface DataType {
-  id: string;
-  code: string;
-  en_name: string;
-  logo_url: string;
-  market: string;
-  name: string;
-}
-
-interface TableParams {
-  pagination?: TablePaginationConfig;
-  sortField?: string;
-  sortOrder?: string;
-  filters?: Record<string, FilterValue>;
-}
-type DataIndex = keyof DataType;
+export const salePosition = ['Trưởng phòng', 'Giám đốc kinh doanh', 'Giám đốc khối', 'Giám đốc vùng'];
 
 const ListOfEmployee: React.FC = () => {
   const queryClient = useQueryClient();
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [urlLogo, setUrlLogo] = useState<string>('');
-  const [recordSelected, setRecordSelected] = useState<any>({});
+  const [open, setOpen] = useState(false);
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
@@ -52,196 +30,25 @@ const ListOfEmployee: React.FC = () => {
     },
   });
   const [sort, setSort] = useState<string>('');
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState({});
   const [searchedColumn, setSearchedColumn] = useState('');
-  const searchInput = useRef<InputRef>(null);
-  const [listStock, setListStock] = useState([]);
-  const [excelData, setExcelData] = useState([]);
+  const [listCustomerSp, setListCustomerSp] = useState([]);
+  const [queryFilter, setQueryFilter] = useState<string>('');
+  const [customerSelect, setCustomerSelect] = useState<any>();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['getListStock', tableParams, sort, searchText],
-    queryFn: () => getStockList(),
+    queryKey: ['getListUser'],
+    queryFn: () => getListEmployee(),
   });
+
   const getRandomuserParams = (params: TableParams) => ({
     size: params.pagination?.pageSize,
     page: params.pagination?.current,
-    market: params.filters?.market,
-    // code: searchText || undefined,
+    role: params.filters?.role?.join(','),
   });
 
-  const useStock = () => {
-    const updateLogo = useMutation(updateLogoStock, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['getListStock']);
-        message.success('Update logo thành công');
-        setModalOpen(false);
-      },
-      onError: (err: any) => {
-        message.error(`${err?.message}` || 'Update logo thất bại');
-      },
-    });
-
-    return updateLogo;
-  };
-
-  const handleSearch = (selectedKeys: string, confirm: (param?: FilterConfirmProps) => void, dataIndex: DataIndex) => {
-    // confirm();
-    // setSearchText(selectedKeys);
-    setSearchedColumn(selectedKeys);
-
-    switch (dataIndex) {
-      case 'code':
-        setSearchText(`code=${selectedKeys}`);
-        break;
-      case 'name':
-        setSearchText(`name=${selectedKeys}`);
-        break;
-      case 'en_name':
-        setSearchText(`en_name=${selectedKeys}`);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleReset = () => {
-    setSort('');
-    setSearchText('');
-    setTableParams({
-      pagination: {
-        current: 1,
-      },
-    });
-  };
-
-  const getColumnSearchProps = (dataIndex: DataIndex, title: string): ColumnType<DataType> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
-      <div style={{ padding: 8 }} onKeyDown={e => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder={`Tìm kiếm ${title}`}
-          value={selectedKeys[0]}
-          onChange={e => {
-            setSelectedKeys(e.target.value ? [e.target.value] : []);
-            handleSearch(e.target.value, confirm, dataIndex);
-          }}
-          style={{ marginBottom: 8, display: 'block', width: '240px' }}
-        />
-      </div>
-    ),
-    filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />,
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: visible => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-    render: text => text,
-  });
-
-  const columns: ColumnsType<DataType> = [
-    {
-      title: 'Thị trường',
-      dataIndex: 'market',
-      sorter: true,
-      filters: [
-        { text: 'Hose', value: 'HOSE' },
-        { text: 'Hnx', value: 'HNX' },
-        { text: 'Upcom', value: 'UPCOM' },
-      ],
-      width: '20%',
-    },
-    {
-      title: 'Mã cổ phiếu',
-      dataIndex: 'code',
-      sorter: true,
-      width: '20%',
-      ...getColumnSearchProps('code', 'mã cổ phiếu'),
-    },
-    {
-      title: 'Tên công ty (tiếng Việt)',
-      sorter: true,
-      dataIndex: 'name',
-      width: '20%',
-      ...getColumnSearchProps('name', 'tên công ty (tiếng Việt)'),
-    },
-    {
-      title: 'Tên công ty (tiếng Anh)',
-      sorter: true,
-      dataIndex: 'en_name',
-      width: '20%',
-      ...getColumnSearchProps('en_name', 'Tên công ty (tiếng Anh)'),
-    },
-    {
-      title: 'Logo',
-      dataIndex: 'logo_url',
-      key: 'logo_url',
-      width: '20%',
-
-      render: (_, record) => (
-        <Space size="middle">
-          {record.logo_url ? (
-            <Tooltip title="Click để thay đổi" placement="right">
-              <Avatar
-                src={record.logo_url}
-                size="large"
-                onClick={() => {
-                  setModalOpen(true), setRecordSelected(record);
-                }}
-                style={{ cursor: 'pointer' }}
-              />
-            </Tooltip>
-          ) : (
-            <Tooltip title="Click để thêm logo" placement="right">
-              <Button
-                type="primary"
-                onClick={() => {
-                  setModalOpen(true), setRecordSelected(record);
-                }}
-              >
-                <PlusOutlined />
-              </Button>
-            </Tooltip>
-          )}
-        </Space>
-      ),
-    },
-  ];
-
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-    setTableParams({
-      pagination,
-      filters,
-      ...sorter,
-    });
-
-    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-      // setData([]);
-    }
-
-    if (sorter.order === 'ascend') {
-      const sorte = `${sorter.field}_order=ASC`;
-
-      setSort(sorte);
-    } else if (sorter.order === 'descend') {
-      const sorte = `${sorter.field}_order=DESC`;
-
-      setSort(sorte);
-    }
-  };
-
-  const getExcelData = async (limit: string) => {
-    try {
-      const res = await getStockList();
-
-      setExcelData(res?.data?.rows);
-    } catch (error) {
-      console.log(error);
-    }
+  const onClose = () => {
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -256,34 +63,49 @@ const ListOfEmployee: React.FC = () => {
         },
       });
 
-      // getExcelData(data?.data?.count);
-      setListStock(data?.data?.rows);
+      const columns = data?.data?.rows?.map((item: any) => {
+        return {
+          ...item,
+          level: salePosition[item?.SaleLevel?.level - 1],
+        };
+      });
+
+      setListCustomerSp(columns);
     }
   }, [data]);
 
-  useEffect(() => {
-    if (isLoading) setExcelData([]);
-  }, [isLoading]);
-
   return (
     <div className="aaa">
-      <HeadTitle title="Danh sách nhân viên" />
-      <Button onClick={handleReset}>Reset bộ lọc</Button>
-      <Result total={data?.data?.count} columns={columns} dataSource={excelData} title="Danh mục cổ phiếu" />
-      <div className="table_stock">
+      <HeadTitle title="Danh sách quản trị viên" />
+      {/* <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Button
+          type="primary"
+          onClick={() => {
+            setOpen(true), setCustomerSelect(undefined);
+          }}
+        >
+          Tạo quản trị viên mới
+        </Button>
+      </div> */}
+      <Result total={data?.data?.count} searchText={searchedColumn} isButtonExcel={false} />
+      <div className="table_user">
         <Table
-          columns={columns}
+          columns={Column()}
           rowKey={record => record.id}
-          dataSource={listStock}
-          pagination={tableParams.pagination}
-          // loading={isLoading}
-          onChange={handleTableChange}
+          dataSource={listCustomerSp}
           scroll={{ x: 'max-content', y: '100%' }}
+          style={{ height: 'auto' }}
         />
       </div>
-      <MyModal title="Cập nhật logo" centered open={modalOpen} onCancel={() => setModalOpen(false)} footer={null}>
-        <MyUpLoad record={recordSelected} useStock={useStock} />
-      </MyModal>
+      <Drawer
+        title={!customerSelect ? 'Tạo mới quản trị viên' : 'Chỉnh sửa '}
+        width={360}
+        onClose={onClose}
+        open={open}
+        bodyStyle={{ paddingBottom: 80 }}
+      >
+        {/* <EditUserManagement initForm={customerSelect} useSale={useSale} /> */}
+      </Drawer>
     </div>
   );
 };

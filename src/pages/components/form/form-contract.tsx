@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { DatePickerProps } from 'antd';
 import type { RangePickerProps } from 'antd/es/date-picker';
 

@@ -1,17 +1,14 @@
 import type { DataIndex, DataType } from './index.interface';
-import type { UseMutationResult } from '@tanstack/react-query';
 import type { InputRef } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import type { ColumnsType, FilterConfirmProps } from 'antd/es/table/interface';
 
-import { SearchOutlined, UserAddOutlined } from '@ant-design/icons';
-import { Avatar, Button, Input, Popconfirm, Space, Tag, Typography } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Button, Input, Space, Typography } from 'antd';
 import { useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
 
-import user from '@/assets/logo/user.png';
-
-const { Text, Link } = Typography;
+const { Text } = Typography;
 
 export const ColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> => {
   const [searchText, setSearchText] = useState('');
@@ -97,99 +94,72 @@ export const ColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> =>
 export const Column = () => {
   const columns: ColumnsType<DataType> = [
     {
-      title: 'Mã',
-      dataIndex: 'customer_code',
-      // sorter: true,
-      width: '14%',
-      ...ColumnSearchProps('customer_code'),
-    },
-    {
-      title: 'Ảnh đại diện',
-      dataIndex: 'avatar_url',
+      title: 'Mã nhân viên',
+      dataIndex: 'staff_code',
       width: '8%',
-      render: (_, record) => (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Avatar src={record.avatar_url ? record.avatar_url : user} size="default" />
-        </div>
-      ),
+      ...ColumnSearchProps('staff_code'),
     },
     {
-      title: 'Tên khách hàng',
-      // sorter: true,
+      title: 'Họ tên',
       dataIndex: 'fullname',
-      width: '10%',
+      width: '8%',
       ...ColumnSearchProps('fullname'),
     },
     {
       title: 'Số điện thoại',
-      // sorter: true,
       dataIndex: 'phone_number',
-      width: '14%',
+      width: '15%',
       ...ColumnSearchProps('phone_number'),
     },
     {
       title: 'Email',
       dataIndex: 'email',
-      width: '18%',
+      width: '14%',
       ...ColumnSearchProps('email'),
     },
     {
-      title: 'Gói dịch vụ',
-      dataIndex: 'subscription_product',
-      width: '8%',
-      // filters: [
-      //   { text: 'Trial', value: 'trial' },
-      //   { text: 'Vip', value: 'vip' },
-      //   { text: 'Premium', value: 'premium' },
-      // ],
-      // render: (_, record) => <Text>{record.subscription?.subscription_product?.name}</Text>,
+      title: 'Chức vụ',
+      dataIndex: 'role',
+      width: '14%',
+      render: (_, record) => <Text>Sale</Text>,
     },
     {
-      title: 'NAV',
-      dataIndex: 'nav',
+      title: 'Level',
+      dataIndex: 'level',
       width: '8%',
-      sorter: (a, b) => Number(a.nav) - Number(b.nav),
-      render: (_, record) => (record?.nav ? <Text>{record?.nav?.toLocaleString()}</Text> : <Tag color="blue"></Tag>),
-    },
-    {
-      title: 'Số ngày còn lại',
-      dataIndex: 'day_remaining',
-      width: '8%',
-      sorter: (a, b) => Number(a.day_remaining) - Number(b.day_remaining),
+      filters: [
+        { text: 'Trưởng phòng', value: 'Trưởng phòng' },
+        { text: 'Giám đốc kinh doanh', value: 'Giám đốc kinh doanh' },
+        { text: 'Giám đốc khối', value: 'Giám đốc khối' },
+        { text: 'Giám đốc vùng', value: 'Giám đốc vùng' },
+      ],
+      onFilter(value, record) {
+        return record.level.includes(value as string);
+      },
     },
     // {
-    //   title: 'Nhân viên chăm, sóc',
-    //   dataIndex: 'sale_name',
-    //   width: '15%',
-    //   ...ColumnSearchProps('sale_name'),
-
+    //   title: '',
+    //   dataIndex: 'action',
+    //   width: '8%',
     //   render: (_, record) => (
-    //     <Space size="middle">
-    //       {record.sale_name ? (
-    //         <Space direction="vertical">
-    //           <Text strong>{record.sale_name}</Text>
-    //           <Popconfirm title="Chắc chắn" onConfirm={() => {}}>
-    //             <Link>Xóa</Link>
-    //           </Popconfirm>
-    //         </Space>
-    //       ) : (
-    //         <Button type="primary" size="middle" onClick={() => {}}>
-    //           <UserAddOutlined />
+    //     <Space size="small">
+    //       <Button type="primary" size="small" onClick={() => {}}>
+    //         <EditOutlined />
+    //       </Button>
+    //       <Popconfirm title="Chắc chắn xóa" onConfirm={() => {}}>
+    //         <Button
+    //           type="primary"
+    //           size="small"
+    //           // onClick={() => {
+    //           //   setCustomerSelect(record);
+    //           // }}
+    //         >
+    //           <DeleteOutlined />
     //         </Button>
-    //       )}
+    //       </Popconfirm>
     //     </Space>
     //   ),
     // },
-    {
-      title: 'Nhân viên chăm sóc',
-      dataIndex: 'sale_name',
-      width: '15%',
-      ...ColumnSearchProps('sale_name'),
-
-      render: (_, record) => (
-        <Space size="middle">{record.sale_name ? <Text>{record.sale_name}</Text> : <Tag color="blue"></Tag>}</Space>
-      ),
-    },
   ];
 
   return columns;

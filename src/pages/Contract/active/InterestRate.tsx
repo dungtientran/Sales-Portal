@@ -157,6 +157,7 @@ const InterestRate: React.FC = () => {
       create.mutate();
     }
   }, [newContract]);
+
   useEffect(() => {
     if (isLoading) setDataExcel([]);
   }, [isLoading]);
@@ -198,12 +199,6 @@ const InterestRate: React.FC = () => {
             Number(item.profit_percent) <= Number(profit_percent_to)
           : true;
 
-      // const minDayMatch = day_remaining_type === 'less' && day_remaining ? item.day_remaining < day_remaining : true;
-      // const maxDayMatch = day_remaining_type === 'max' && day_remaining ? item.day_remaining > day_remaining : true;
-
-      // const careHaveByMatch = careby === 'have' ? Boolean(item.sale_name) : true;
-      // const careDontHaveByMatch = careby === 'no_have' ? !item.sale_name : true;
-
       return initValueMatch && profitPercentMatch && dateMath;
     });
   };
@@ -214,8 +209,6 @@ const InterestRate: React.FC = () => {
     setListContract(resultFilterData);
     // setTotal(resultFilterData?.length);
   }, [queryFilter]);
-  console.log('query________________filter', queryFilter);
-  console.log('query________________filter____________data', listContract);
 
   return (
     <div className="aaa">
