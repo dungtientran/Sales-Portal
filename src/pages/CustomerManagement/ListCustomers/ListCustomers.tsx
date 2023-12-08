@@ -227,8 +227,6 @@ const ListCustomers: React.FC = () => {
     }
   }, [listStaffRessponse?.data?.code]);
 
-  console.log('queryrrrrrrr', queryFilter);
-
   return (
     <div className="aaa">
       <HeadTitle title="Danh sách khách hàng" />

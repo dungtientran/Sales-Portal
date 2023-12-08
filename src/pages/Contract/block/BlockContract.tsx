@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { ColumnTyle, DataType, TableParams } from './index.interface';
+import type { ColumnTyle, DataType } from './index.interface';
 
 import { PlusOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, DatePicker, Drawer, message, Spin, Table } from 'antd';
-import qs from 'qs';
+import { Button, Drawer, message, Table } from 'antd';
+import { format, isWithinInterval, parse } from 'date-fns';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
-
-const { RangePicker } = DatePicker;
 
 import { listContractApi } from '@/api/ttd_contract';
 import { listCustomerApi } from '@/api/ttd_list_customer';
@@ -20,41 +19,58 @@ import BoxFilter from './boxFilter';
 import { Column } from './columns';
 import DetailsContract from './DetailsContract';
 
+const { getSaleList, getListUser } = listCustomerApi;
+
 const { getListContract, createContract, updateContract } = listContractApi;
+
+export type filterQueryType = {
+  start_date: string;
+  end_date: string;
+  initial_value_from: string;
+  initial_value_to: string;
+  profit_percent_from: string;
+  profit_percent_to: string;
+  fila_commission_from: string;
+  fila_commission_to: string;
+};
 
 const BlockContract: React.FC = () => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModel] = useState(false);
-  const [tableParams, setTableParams] = useState<TableParams>({
-    pagination: {
-      current: 1,
-      pageSize: 10,
-      showSizeChanger: true,
-      pageSizeOptions: [10, 20, 50],
-    },
-  });
-  const [sort, setSort] = useState<string>('');
-  const [searchText, setSearchText] = useState({});
-  const [listCustomerSp, setListCustomerSp] = useState([]);
+
+  const [listContract, setListContract] = useState([]);
   const [newContract, setNewContract] = useState<any>();
+  const [originalData, setOriginalData] = useState([]);
 
   const [dataExcel, setDataExcel] = useState([]);
 
-  const [queryFilter, setQueryFilter] = useState<string>('');
+  const [queryFilter, setQueryFilter] = useState<filterQueryType>({
+    start_date: '',
+    end_date: '',
+    initial_value_from: '',
+    initial_value_to: '',
+    profit_percent_from: '',
+    profit_percent_to: '',
+    fila_commission_from: '',
+    fila_commission_to: '',
+  });
   const [updateDataSp, setUpdateDataSp] = useState<any>();
   const [customerSelect, setCustomerSelect] = useState<any>();
   const [idDelete, setIdDelete] = useState<string>('');
+  const [contractExists, setContractExists] = useState(false);
+
+  const [total, setTotal] = useState(0);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['getListContract'],
+    queryKey: ['getListContractDone'],
     queryFn: () => getListContract('done'),
   });
 
   const update = useMutation({
     mutationFn: _ => updateContract(updateDataSp?.contract_no as string, updateDataSp),
     onSuccess: _ => {
-      queryClient.invalidateQueries(['getListContract']);
+      queryClient.invalidateQueries(['getListContractDone']);
       message.success('Update thành công');
       setUpdateDataSp(undefined);
       setOpen(false);
@@ -66,66 +82,40 @@ const BlockContract: React.FC = () => {
   const create = useMutation({
     mutationFn: _ => createContract(newContract),
     onSuccess: _ => {
-      queryClient.invalidateQueries(['getListContract']);
+      queryClient.invalidateQueries(['getListContractDone']);
       message.success('Tạo hợp đồng thành công');
       setNewContract(undefined);
       setOpen(false);
+      setContractExists(false);
     },
-    onError: _ => {
-      message.error('Tạo hợp đồng thất bại');
+    onError: (err: any) => {
+      message.error(`${err?.message}` || 'Tạo hợp đồng thất bại');
+      setContractExists(true);
     },
   });
+  const saleData = useQuery({
+    queryKey: ['getSaleList'],
+    queryFn: () => getSaleList(),
+  });
 
-  const getRandomuserParams = (params: TableParams) => ({
-    status: 'done',
-    size: params.pagination?.pageSize,
-    page: params.pagination?.current,
-    subscriptions: params.filters?.subscription_product?.join(','),
+  const userData = useQuery({
+    queryKey: ['getListUser'],
+    queryFn: () => getListUser(''),
   });
 
   const onClose = () => {
     setOpen(false);
   };
 
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-    setTableParams({
-      pagination,
-      filters,
-      ...sorter,
-    });
-
-    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-      // setData([]);
-    }
-
-    if (sorter.order === 'ascend') {
-      const sorte = `${sorter.field}_order=ASC`;
-
-      setSort(sorte);
-    } else if (sorter.order === 'descend') {
-      const sorte = `${sorter.field}_order=DESC`;
-
-      setSort(sorte);
-    }
-  };
-
   const handelResetFilter = () => {
-    setQueryFilter('');
-    setSearchText('');
-    setSort('');
+    // setQueryFilter('');
+    setListContract(originalData);
   };
 
-  console.log('Data___________________________', data);
+  const handleSetPageOnFilter = () => {};
+
   useEffect(() => {
     if (data) {
-      setTableParams({
-        ...tableParams,
-        pagination: {
-          ...tableParams.pagination,
-          total: data?.data?.count,
-        },
-      });
-
       const columndata = data?.data?.rows.map((item: DataType) => {
         return {
           id: item?.id,
@@ -136,12 +126,12 @@ const BlockContract: React.FC = () => {
           email: item?.customer?.email,
           staff_code: item?.sale?.staff_code,
           name_sale: item?.sale?.fullname,
-          start_date: item?.start_date,
-          end_date: item?.end_date,
+          start_date: moment(item?.start_date).format('DD/MM/YYYY'),
+          end_date: moment(item?.end_date).format('DD/MM/YYYY'),
           initial_value: item?.initial_value,
           expected_end_value: item?.expected_end_value,
           commission: item?.contract_commission?.fila_commission,
-          status: 'Đã thanh lý',
+          status: item?.status === 'pending' ? 'Đang có hiệu lực' : 'Đã thanh lý',
           profit_percent: item?.profit_percent,
           total_commission:
             item?.contract_commission?.director_commission +
@@ -151,51 +141,13 @@ const BlockContract: React.FC = () => {
         };
       });
 
-      setListCustomerSp(columndata);
+      // getListDataExcel(data?.data?.count);
+
+      setListContract(columndata);
+      setOriginalData(columndata);
+      setTotal(data?.data?.count);
     }
   }, [data]);
-
-  const getListDataExcel = async (limit: number) => {
-    try {
-      const res = await getListContract('done');
-
-      if (res?.code === 200) {
-        const dataExcel = res?.data?.rows;
-        const columnsExcel = dataExcel?.map((item: DataType) => {
-          return {
-            id: item?.id,
-            contract_no: item?.contract_no,
-            customer_code: item?.customer?.customer_code,
-            name: item?.customer?.fullname,
-            phone_number: item?.customer?.phone_number,
-            email: item?.customer?.email,
-            staff_code: item?.sale?.staff_code,
-            name_sale: item?.sale?.fullname,
-            start_date: item?.start_date,
-            end_date: item?.end_date,
-            initial_value: item?.initial_value,
-            expected_end_value: item?.expected_end_value,
-            commission: item?.contract_commission?.fila_commission,
-            status: item?.status === 'pending' ? 'Đang có hiệu lực' : 'Đã thanh lý',
-            profit_percent: item?.profit_percent,
-            total_commission:
-              item?.contract_commission?.director_commission +
-              item?.contract_commission?.fila_commission +
-              item?.contract_commission?.manager_commission +
-              item?.contract_commission?.sales_commission,
-          };
-        });
-
-        setDataExcel(columnsExcel);
-      } else {
-        message.error('Có lỗi từ server');
-      }
-    } catch (error) {
-      message.error('Có lỗi từ server');
-    }
-
-    return data;
-  };
 
   useEffect(() => {
     if (updateDataSp) {
@@ -209,29 +161,92 @@ const BlockContract: React.FC = () => {
     }
   }, [newContract]);
 
-  // console.log('customerSelect_______________________', customerSelect);
-  // console.log("sort______________________", sort);
-  // console.log("dataEcel____________________", dataExcel);
+  useEffect(() => {
+    if (isLoading) setDataExcel([]);
+  }, [isLoading]);
+
+  const filterData = (queryFilter: filterQueryType) => {
+    const {
+      end_date,
+      fila_commission_from,
+      fila_commission_to,
+      initial_value_from,
+      initial_value_to,
+      profit_percent_from,
+      profit_percent_to,
+      start_date,
+    } = queryFilter;
+    const startDateObj = parse(start_date, 'dd/MM/yyyy', new Date());
+    const endDateObj = parse(end_date, 'dd/MM/yyyy', new Date());
+
+    return originalData.filter((item: ColumnTyle) => {
+      const itemStartDate = parse(item.start_date, 'dd/MM/yyyy', new Date());
+      const itemEndDate = parse(item.end_date, 'dd/MM/yyyy', new Date());
+
+      const dateMath =
+        start_date && end_date
+          ? isWithinInterval(itemStartDate, { start: startDateObj, end: endDateObj }) ||
+            isWithinInterval(itemEndDate, { start: startDateObj, end: endDateObj }) ||
+            (itemStartDate >= startDateObj && itemEndDate <= endDateObj)
+          : true;
+
+      const initValueMatch =
+        initial_value_to && initial_value_from
+          ? Number(item.initial_value) >= Number(initial_value_from) &&
+            Number(item.initial_value) <= Number(initial_value_to)
+          : true;
+
+      const profitPercentMatch =
+        profit_percent_to && profit_percent_from
+          ? Number(item.profit_percent) >= Number(profit_percent_from) &&
+            Number(item.profit_percent) <= Number(profit_percent_to)
+          : true;
+
+      return initValueMatch && profitPercentMatch && dateMath;
+    });
+  };
+
+  const resultFilterData = (queryFilter: filterQueryType) => {
+    const resultFilterData = filterData(queryFilter);
+
+    setListContract(resultFilterData);
+    setTotal(resultFilterData?.length);
+  };
+
   return (
     <div className="aaa">
       <HeadTitle title="Hợp đồng đã thanh lý" />
-
-      <BoxFilter setQueryFilter={setQueryFilter} handelResetFilter={handelResetFilter} />
+      {/* <div style={{ display: 'flex', textAlign: 'center', justifyContent: 'center' }}>
+        <Button
+          onClick={() => {
+            setOpen(true);
+            // setNewContract(undefined);
+            setCustomerSelect(undefined);
+          }}
+          type="primary"
+        >
+          <PlusOutlined /> Thêm hợp đồng
+        </Button>
+      </div> */}
+      <BoxFilter
+        setQueryFilter={setQueryFilter}
+        handelResetFilter={handelResetFilter}
+        handleSetPageOnFilter={handleSetPageOnFilter}
+        resultFilterData={resultFilterData}
+      />
       <Result
-        total={data?.data?.count}
-        columns={Column(setSearchText, setOpen, setCustomerSelect, setIdDelete, setOpenModel)}
-        dataSource={dataExcel}
-        title="Danh sách hợp đồng Vip (hết hiệu lực)"
+        total={total}
+        columns={Column()}
+        dataSource={listContract}
+        title="Danh sách hợp đồng Vip (còn hiệu lực)"
         totalCommission={data?.total}
       />
       <div className="table_contract">
         <Table
-          columns={Column(setSearchText, setOpen, setCustomerSelect, setIdDelete, setOpenModel)}
+          columns={Column()}
           rowKey={record => record.id}
-          dataSource={listCustomerSp}
-          pagination={tableParams.pagination}
+          dataSource={listContract}
           loading={isLoading}
-          onChange={handleTableChange}
           scroll={{ x: 'max-content', y: '100%' }}
           style={{ height: 'auto' }}
         />
@@ -244,13 +259,15 @@ const BlockContract: React.FC = () => {
         bodyStyle={{ paddingBottom: 80 }}
       >
         {/* <Spin spinning={update.isLoading}> */}
-        {/* <CreateContract
+        <CreateContract
           setUpdateDataSp={setUpdateDataSp}
           initForm={customerSelect}
-          loading={!customerSelect ? isLoading : update.isLoading}
-          saleData={ad}
-          useData={}
-        /> */}
+          setNewContract={setNewContract}
+          loading={!customerSelect ? create.isLoading : update.isLoading}
+          saleData={saleData.data}
+          useData={userData.data}
+          contractExists={contractExists}
+        />
         {/* </Spin> */}
       </Drawer>
       <MyModal

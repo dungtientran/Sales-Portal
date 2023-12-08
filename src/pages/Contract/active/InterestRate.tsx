@@ -216,7 +216,7 @@ const InterestRate: React.FC = () => {
   return (
     <div className="aaa">
       <HeadTitle title="Hợp đồng còn hiệu lực" />
-      <div style={{ display: 'flex', textAlign: 'center', justifyContent: 'center' }}>
+      {/* <div style={{ display: 'flex', textAlign: 'center', justifyContent: 'center' }}>
         <Button
           onClick={() => {
             setOpen(true);
@@ -227,7 +227,7 @@ const InterestRate: React.FC = () => {
         >
           <PlusOutlined /> Thêm hợp đồng
         </Button>
-      </div>
+      </div> */}
       <BoxFilter
         setQueryFilter={setQueryFilter}
         handelResetFilter={handelResetFilter}

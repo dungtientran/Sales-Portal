@@ -10,6 +10,7 @@ import { Button, Input, Space, Tag, Typography } from 'antd';
 import moment from 'moment';
 import { Fragment, useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
+import { useSelector } from 'react-redux';
 
 const { Text } = Typography;
 
@@ -95,6 +96,10 @@ export const ColumnSearchPropss = (dataIndex: DataIndex): ColumnType<ColumnTyle>
 };
 
 export const Column = () => {
+  const { user } = useSelector(state => state.user);
+
+  const saleLevel = user.SaleLevel.level;
+
   const columns: ColumnsType<ColumnTyle> = [
     {
       title: 'Số hợp đồng',
@@ -163,34 +168,68 @@ export const Column = () => {
       sorter: (a, b) => Number(a.profit_percent) - Number(b.profit_percent),
     },
     {
-      title: 'Hoa hồng tạm tính (Fila)',
-      dataIndex: 'commission',
-      width: '16%',
-      render: (_, record) => <Text>{record?.commission?.toLocaleString()}</Text>,
-      sorter: (a, b) => Number(a.commission) - Number(b.commission),
+      title: 'Hoa hồng Sales',
+      dataIndex: 'profit_percent',
+      width: '8%',
+      render: (_, record) => <Tag color={record?.profit_percent > 0 ? 'blue' : 'red'}>{record?.profit_percent}</Tag>,
+      sorter: (a, b) => Number(a.profit_percent) - Number(b.profit_percent),
     },
-    {
-      title: 'Tình trạng',
-      dataIndex: 'status',
-      width: '5%',
-      render: (_, record) => <Tag color="#108ee9">{record?.status}</Tag>,
-    },
-    {
-      title: '',
-      dataIndex: 'action',
-      // width: '8%',
-      render: (_, record) => (
-        <Space size="small">
-          <Button type="primary" size="small" onClick={() => {}}>
-            <EditOutlined />
-          </Button>
-          <Button type="primary" size="small" onClick={() => {}}>
-            <EyeOutlined />
-          </Button>
-        </Space>
-      ),
-    },
+    // {
+    //   title: 'Hoa hồng tạm tính (Fila)',
+    //   dataIndex: 'commission',
+    //   width: '16%',
+    //   render: (_, record) => <Text>{record?.commission?.toLocaleString()}</Text>,
+    //   sorter: (a, b) => Number(a.commission) - Number(b.commission),
+    // },
+    // {
+    //   title: 'Tình trạng',
+    //   dataIndex: 'status',
+    //   width: '5%',
+    //   render: (_, record) => <Tag color="#108ee9">{record?.status}</Tag>,
+    // },
+    // {
+    //   title: '',
+    //   dataIndex: 'action',
+    //   // width: '8%',
+    //   render: (_, record) => (
+    //     <Space size="small">
+    //       <Button type="primary" size="small" onClick={() => {}}>
+    //         <EditOutlined />
+    //       </Button>
+    //       <Button type="primary" size="small" onClick={() => {}}>
+    //         <EyeOutlined />
+    //       </Button>
+    //     </Space>
+    //   ),
+    // },
   ];
+
+  if (saleLevel === 1) {
+    columns.push(
+      {
+        title: 'Hoa hồng trưởng phòng',
+        dataIndex: 'profit_percent',
+        width: '8%',
+        render: (_, record) => <Tag color={record?.profit_percent > 0 ? 'blue' : 'red'}>{record?.profit_percent}</Tag>,
+        sorter: (a, b) => Number(a.profit_percent) - Number(b.profit_percent),
+      },
+      {
+        title: 'Hoa hồng giám đốc',
+        dataIndex: 'profit_percent',
+        width: '8%',
+        render: (_, record) => <Tag color={record?.profit_percent > 0 ? 'blue' : 'red'}>{record?.profit_percent}</Tag>,
+        sorter: (a, b) => Number(a.profit_percent) - Number(b.profit_percent),
+      },
+    );
+  } else {
+    columns.push({
+      title: 'Hoa hồng giám đốc',
+      dataIndex: 'profit_percent',
+      width: '8%',
+      render: (_, record) => <Tag color={record?.profit_percent > 0 ? 'blue' : 'red'}>{record?.profit_percent}</Tag>,
+      sorter: (a, b) => Number(a.profit_percent) - Number(b.profit_percent),
+    });
+  }
 
   return columns;
 };

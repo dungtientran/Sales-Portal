@@ -1,3 +1,4 @@
+import type { filterQueryType } from './InterestRate';
 import type { RadioChangeEvent } from 'antd';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 
@@ -10,11 +11,13 @@ const { Text } = Typography;
 const { Option } = Select;
 
 interface IBoxFilter {
-  setQueryFilter: (query: string) => void;
+  setQueryFilter: (query: filterQueryType) => void;
   handelResetFilter: () => void;
+  handleSetPageOnFilter: () => void;
+  resultFilterData: (query: filterQueryType) => void;
 }
 
-const BoxFilter = ({ setQueryFilter, handelResetFilter }: IBoxFilter) => {
+const BoxFilter = ({ setQueryFilter, handelResetFilter, handleSetPageOnFilter, resultFilterData }: IBoxFilter) => {
   const [queryObj, setQueryObj] = useState<any>({
     start_date: '',
     end_date: '',
@@ -52,7 +55,16 @@ const BoxFilter = ({ setQueryFilter, handelResetFilter }: IBoxFilter) => {
   // console.log('queryObj_______________', queryObj);
 
   const handleResetFilter = () => {
-    setQueryObj(undefined);
+    setQueryObj({
+      start_date: '',
+      end_date: '',
+      initial_value_from: '',
+      initial_value_to: '',
+      profit_percent_from: '',
+      profit_percent_to: '',
+      fila_commission_from: '',
+      fila_commission_to: '',
+    });
     // console.log(123456);
     setStatusContract('');
     handelResetFilter();
@@ -62,7 +74,9 @@ const BoxFilter = ({ setQueryFilter, handelResetFilter }: IBoxFilter) => {
   const handleFilter = () => {
     const querystring = qs.stringify(queryObj);
 
-    setQueryFilter(querystring);
+    setQueryFilter(queryObj);
+    handleSetPageOnFilter();
+    resultFilterData(queryObj);
   };
 
   // useEffect(() => {
@@ -103,7 +117,7 @@ const BoxFilter = ({ setQueryFilter, handelResetFilter }: IBoxFilter) => {
           <Text strong>Ngày Hiệu lực:</Text>
         </div>
         <Space>
-          <RangePicker style={{ width: '328px' }} format="YYYY/MM/DD" onChange={onChange} value={selectedDates} />
+          <RangePicker style={{ width: '328px' }} format="DD/MM/YYYY" onChange={onChange} value={selectedDates} />
         </Space>
       </Space>
       <Space direction="vertical" size="middle">
@@ -143,7 +157,7 @@ const BoxFilter = ({ setQueryFilter, handelResetFilter }: IBoxFilter) => {
         </Space>
         <Space>
           <div style={{ width: '130px' }}>
-            <Text strong>Lợi nhuận: </Text>
+            <Text strong>Lợi nhuận dự kiến:</Text>
           </div>
           <Space>
             <InputNumber
@@ -175,9 +189,9 @@ const BoxFilter = ({ setQueryFilter, handelResetFilter }: IBoxFilter) => {
             />
           </Space>
         </Space>
-        <Space>
+        {/* <Space>
           <div style={{ width: '130px' }}>
-            <Text strong>Hoa hồng(Fila): </Text>
+            <Text strong>Hoa hồng tạm tính (Fila): </Text>
           </div>
           <Space>
             <InputNumber
@@ -201,13 +215,12 @@ const BoxFilter = ({ setQueryFilter, handelResetFilter }: IBoxFilter) => {
                   ...prev,
                   fila_commission_to: value,
                 }))
-              }
-              style={{ width: '160px' }}
+              }              style={{ width: '160px' }}
               min={0}
               formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             />
           </Space>
-        </Space>
+        </Space> */}
       </Space>
       <Space>
         <Button onClick={handleFilter}>Lọc</Button>
