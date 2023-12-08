@@ -10,7 +10,11 @@ import Highlighter from 'react-highlight-words';
 
 const { Text } = Typography;
 
-export const ColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> => {
+export const ColumnSearchProps = (
+  dataIndex: DataIndex,
+  listCustomerSp: DataType[],
+  setTotal: (total: number) => void,
+): ColumnType<DataType> => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef<InputRef>(null);
@@ -23,6 +27,16 @@ export const ColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> =>
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
+
+    if (selectedKeys[0]) {
+      const filtered = listCustomerSp.filter(record =>
+        record[dataIndex] ? record[dataIndex].toString().toLowerCase().includes(selectedKeys[0].toLowerCase()) : '',
+      );
+
+      setTotal(filtered.length);
+    } else {
+      setTotal(listCustomerSp.length);
+    }
   };
 
   const handleReset = (clearFilters: () => void) => {
@@ -91,37 +105,37 @@ export const ColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> =>
   };
 };
 
-export const Column = () => {
+export const Column = (listCustomerSp: DataType[], setTotal: (total: number) => void) => {
   const columns: ColumnsType<DataType> = [
     {
       title: 'Mã nhân viên',
       dataIndex: 'staff_code',
       width: '8%',
-      ...ColumnSearchProps('staff_code'),
+      ...ColumnSearchProps('staff_code', listCustomerSp, setTotal),
     },
     {
       title: 'Họ tên',
       dataIndex: 'fullname',
       width: '8%',
-      ...ColumnSearchProps('fullname'),
+      ...ColumnSearchProps('fullname', listCustomerSp, setTotal),
     },
     {
       title: 'Số điện thoại',
       dataIndex: 'phone_number',
       width: '15%',
-      ...ColumnSearchProps('phone_number'),
+      ...ColumnSearchProps('phone_number', listCustomerSp, setTotal),
     },
     {
       title: 'Email',
       dataIndex: 'email',
       width: '14%',
-      ...ColumnSearchProps('email'),
+      ...ColumnSearchProps('email', listCustomerSp, setTotal),
     },
     {
       title: 'Chức vụ',
       dataIndex: 'role',
       width: '14%',
-      render: (_, record) => <Text>Sale</Text>,
+      render: () => <Text>Sale</Text>,
     },
     {
       title: 'Level',

@@ -13,7 +13,11 @@ import user from '@/assets/logo/user.png';
 
 const { Text, Link } = Typography;
 
-export const ColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> => {
+export const ColumnSearchProps = (
+  dataIndex: DataIndex,
+  listData: DataType[],
+  setTotal: (total: number) => void,
+): ColumnType<DataType> => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef<InputRef>(null);
@@ -26,6 +30,16 @@ export const ColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> =>
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
+
+    if (selectedKeys[0]) {
+      const filtered = listData.filter(record =>
+        record[dataIndex] ? record[dataIndex].toString().toLowerCase().includes(selectedKeys[0].toLowerCase()) : '',
+      );
+
+      setTotal(filtered.length);
+    } else {
+      setTotal(listData.length);
+    }
   };
 
   const handleReset = (clearFilters: () => void) => {
@@ -94,14 +108,14 @@ export const ColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> =>
   };
 };
 
-export const Column = () => {
+export const Column = (listData: DataType[], setTotal: (total: number) => void) => {
   const columns: ColumnsType<DataType> = [
     {
       title: 'Mã',
       dataIndex: 'customer_code',
       // sorter: true,
       width: '14%',
-      ...ColumnSearchProps('customer_code'),
+      ...ColumnSearchProps('customer_code', listData, setTotal),
     },
     {
       title: 'Ảnh đại diện',
@@ -118,20 +132,20 @@ export const Column = () => {
       // sorter: true,
       dataIndex: 'fullname',
       width: '10%',
-      ...ColumnSearchProps('fullname'),
+      ...ColumnSearchProps('fullname', listData, setTotal),
     },
     {
       title: 'Số điện thoại',
       // sorter: true,
       dataIndex: 'phone_number',
       width: '14%',
-      ...ColumnSearchProps('phone_number'),
+      ...ColumnSearchProps('phone_number', listData, setTotal),
     },
     {
       title: 'Email',
       dataIndex: 'email',
       width: '18%',
-      ...ColumnSearchProps('email'),
+      ...ColumnSearchProps('email', listData, setTotal),
     },
     {
       title: 'Gói dịch vụ',
@@ -184,7 +198,7 @@ export const Column = () => {
       title: 'Nhân viên chăm sóc',
       dataIndex: 'sale_name',
       width: '15%',
-      ...ColumnSearchProps('sale_name'),
+      ...ColumnSearchProps('sale_name', listData, setTotal),
 
       render: (_, record) => (
         <Space size="middle">{record.sale_name ? <Text>{record.sale_name}</Text> : <Tag color="blue"></Tag>}</Space>

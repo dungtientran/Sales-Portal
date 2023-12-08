@@ -1,4 +1,4 @@
-import type { TableParams } from './index.interface';
+import type { DataType, TableParams } from './index.interface';
 
 import './index.less';
 
@@ -21,6 +21,7 @@ export const salePosition = ['Trưởng phòng', 'Giám đốc kinh doanh', 'Gi�
 const ListOfEmployee: React.FC = () => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [total, setTotal] = useState(0);
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
@@ -29,22 +30,13 @@ const ListOfEmployee: React.FC = () => {
       pageSizeOptions: [10, 20, 50],
     },
   });
-  const [sort, setSort] = useState<string>('');
-  const [searchText, setSearchText] = useState({});
-  const [searchedColumn, setSearchedColumn] = useState('');
-  const [listCustomerSp, setListCustomerSp] = useState([]);
+  const [listCustomerSp, setListCustomerSp] = useState<DataType[]>([]);
   const [queryFilter, setQueryFilter] = useState<string>('');
   const [customerSelect, setCustomerSelect] = useState<any>();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['getListUser'],
+    queryKey: ['getListEmployee'],
     queryFn: () => getListEmployee(),
-  });
-
-  const getRandomuserParams = (params: TableParams) => ({
-    size: params.pagination?.pageSize,
-    page: params.pagination?.current,
-    role: params.filters?.role?.join(','),
   });
 
   const onClose = () => {
@@ -55,14 +47,6 @@ const ListOfEmployee: React.FC = () => {
     if (!data) return;
 
     if (data) {
-      setTableParams({
-        ...tableParams,
-        pagination: {
-          ...tableParams.pagination,
-          total: data?.data?.count,
-        },
-      });
-
       const columns = data?.data?.rows?.map((item: any) => {
         return {
           ...item,
@@ -71,10 +55,9 @@ const ListOfEmployee: React.FC = () => {
       });
 
       setListCustomerSp(columns);
+      setTotal(data?.data?.count);
     }
   }, [data]);
-
-  console.log('listCustomerSp_____________________________', listCustomerSp);
 
   return (
     <div className="aaa">
@@ -89,10 +72,10 @@ const ListOfEmployee: React.FC = () => {
           Tạo quản trị viên mới
         </Button>
       </div> */}
-      <Result total={data?.data?.count} searchText={searchedColumn} isButtonExcel={false} />
+      <Result total={total} isButtonExcel={false} />
       <div className="table_user">
         <Table
-          columns={Column()}
+          columns={Column(listCustomerSp, setTotal)}
           rowKey={record => record.id}
           dataSource={listCustomerSp}
           scroll={{ x: 'max-content', y: '100%' }}

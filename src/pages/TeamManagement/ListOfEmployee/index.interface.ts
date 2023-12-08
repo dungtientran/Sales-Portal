@@ -3,19 +3,12 @@ import type { FilterValue } from 'antd/es/table/interface';
 
 export interface DataType {
   id: string;
-  avatar_url: string | null;
+  avatar_url: string;
   email: string;
   fullname: string;
   phone_number: string;
-  SaleLevel: {
-    level: number;
-  };
   level: string;
 
-  role: {
-    id: string;
-    name: string;
-  };
   staff_code: string;
 }
 

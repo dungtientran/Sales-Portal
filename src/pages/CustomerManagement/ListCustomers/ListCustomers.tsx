@@ -244,10 +244,15 @@ const ListCustomers: React.FC = () => {
         resultFilterData={resultFilterData}
         listStaff={listStaff}
       />
-      <Result total={total} columns={Column()} dataSource={listCustomer} title="Danh sách khách hàng" />
+      <Result
+        total={total}
+        columns={Column(listCustomer, setTotal)}
+        dataSource={listCustomer}
+        title="Danh sách khách hàng"
+      />
       <div className="table_list_customer">
         <Table
-          columns={Column()}
+          columns={Column(listCustomer, setTotal)}
           rowKey={record => record.id}
           dataSource={listCustomer}
           scroll={{ x: 'max-content', y: '100%' }}

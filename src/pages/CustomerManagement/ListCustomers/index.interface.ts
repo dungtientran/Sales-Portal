@@ -9,8 +9,8 @@ export interface DataType {
   customer_code: string;
   phone_number: string;
   subscription_product: string;
-  nav: number | null;
-  sale_name: string | undefined;
+  nav: number;
+  sale_name: string;
   day_remaining: number;
 }
 
