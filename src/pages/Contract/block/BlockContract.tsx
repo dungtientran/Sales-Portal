@@ -95,12 +95,12 @@ const BlockContract: React.FC = () => {
   });
   const saleData = useQuery({
     queryKey: ['getSaleList'],
-    queryFn: () => getSaleList(),
+    // queryFn: () => getSaleList(),
   });
 
   const userData = useQuery({
     queryKey: ['getListUser'],
-    queryFn: () => getListUser(''),
+    // queryFn: () => getListUser(''),
   });
 
   const onClose = () => {
@@ -251,25 +251,7 @@ const BlockContract: React.FC = () => {
           style={{ height: 'auto' }}
         />
       </div>
-      <Drawer
-        title={!customerSelect ? 'Thêm hợp đồng' : 'Sửa hợp đồng'}
-        width={360}
-        onClose={onClose}
-        open={open}
-        bodyStyle={{ paddingBottom: 80 }}
-      >
-        {/* <Spin spinning={update.isLoading}> */}
-        <CreateContract
-          setUpdateDataSp={setUpdateDataSp}
-          initForm={customerSelect}
-          setNewContract={setNewContract}
-          loading={!customerSelect ? create.isLoading : update.isLoading}
-          saleData={saleData.data}
-          useData={userData.data}
-          contractExists={contractExists}
-        />
-        {/* </Spin> */}
-      </Drawer>
+
       <MyModal
         // title="Chi tiết hợp đồng"
         centered

@@ -95,12 +95,12 @@ const InterestRate: React.FC = () => {
   });
   const saleData = useQuery({
     queryKey: ['getSaleList'],
-    queryFn: () => getSaleList(),
+    // queryFn: () => getSaleList(),
   });
 
   const userData = useQuery({
     queryKey: ['getListUser'],
-    queryFn: () => getListUser(''),
+    // queryFn: () => getListUser(''),
   });
 
   const onClose = () => {
