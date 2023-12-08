@@ -13,6 +13,10 @@ import CreateUser from '@/pages/components/form/form-add-user';
 import HeadTitle from '@/pages/components/head-title/HeadTitle';
 import Result from '@/pages/components/result/Result';
 
+const { getListEmployee } = listEmployeeApi;
+
+import { listEmployeeApi } from '@/api/ttd_list_employee';
+
 import { Column } from './columns';
 
 export type filterQueryType = {
@@ -20,7 +24,7 @@ export type filterQueryType = {
   day_remaining_type: 'less' | 'max' | undefined;
   nav_low: number | undefined;
   nav_high: number | undefined;
-  careby: 'have' | 'no_have' | undefined;
+  careby: string | undefined;
 };
 
 const { getListCustomer, createCustomer, addSaleCustomer, removeSaleCustomer } = listCustomerApi;
@@ -46,6 +50,7 @@ const ListCustomers: React.FC = () => {
   const [originalData, setOriginalData] = useState([]);
 
   const [listCustomer, setListCustomer] = useState([]);
+  const [listStaff, setListStaffr] = useState([]);
 
   const [customerSelect, setCustomerSelect] = useState<any>();
 
@@ -56,6 +61,11 @@ const ListCustomers: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['getListCustomer'],
     queryFn: () => getListCustomer(),
+  });
+
+  const listStaffRessponse = useQuery({
+    queryKey: ['getListEmployee'],
+    queryFn: () => getListEmployee(),
   });
 
   const getExcelData = async (limit: string) => {
@@ -159,10 +169,9 @@ const ListCustomers: React.FC = () => {
       const minDayMatch = day_remaining_type === 'less' && day_remaining ? item.day_remaining < day_remaining : true;
       const maxDayMatch = day_remaining_type === 'max' && day_remaining ? item.day_remaining > day_remaining : true;
 
-      const careHaveByMatch = careby === 'have' ? Boolean(item.sale_name) : true;
-      const careDontHaveByMatch = careby === 'no_have' ? !item.sale_name : true;
+      const carebyMatch = careby ? item.sale_name?.includes(careby) : true;
 
-      return navMatch && minDayMatch && maxDayMatch && careHaveByMatch && careDontHaveByMatch;
+      return navMatch && minDayMatch && maxDayMatch && carebyMatch;
     });
   };
 
@@ -206,6 +215,19 @@ const ListCustomers: React.FC = () => {
       // setDataExcel();
     }
   }, [data]);
+  useEffect(() => {
+    if (listStaffRessponse?.data?.code === 200) {
+      const listStaffCustom = listStaffRessponse?.data?.data?.rows?.map((item: any) => {
+        return {
+          value: item.fullname,
+        };
+      });
+
+      setListStaffr(listStaffCustom);
+    }
+  }, [listStaffRessponse?.data?.code]);
+
+  console.log('queryrrrrrrr', queryFilter);
 
   return (
     <div className="aaa">
@@ -220,6 +242,7 @@ const ListCustomers: React.FC = () => {
         clearFilter={handleClearFilter}
         setTableParams={setTableParams}
         resultFilterData={resultFilterData}
+        listStaff={listStaff}
       />
       <Result total={total} columns={Column()} dataSource={listCustomer} title="Danh sách khách hàng" />
       <div className="table_list_customer">

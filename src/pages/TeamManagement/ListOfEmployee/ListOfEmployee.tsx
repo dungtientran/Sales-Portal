@@ -78,7 +78,7 @@ const ListOfEmployee: React.FC = () => {
 
   return (
     <div className="aaa">
-      <HeadTitle title="Danh sách quản trị viên" />
+      <HeadTitle title="Danh sách nhân viên" />
       {/* <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Button
           type="primary"

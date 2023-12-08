@@ -3,8 +3,7 @@ import type { filterQueryType } from '@/pages/CustomerManagement/ListCustomers/L
 import type { Dispatch, SetStateAction } from 'react';
 
 import { AutoComplete, Button, InputNumber, Radio, Select, Space, Typography } from 'antd';
-import qs from 'qs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -14,6 +13,7 @@ interface IBoxFilterListCustomer {
   clearFilter: () => void;
   setTableParams: Dispatch<SetStateAction<TableParams>>;
   resultFilterData: (query: filterQueryType) => void;
+  listStaff: any;
 }
 
 const BoxFilterListCustomer = ({
@@ -21,6 +21,7 @@ const BoxFilterListCustomer = ({
   clearFilter,
   setTableParams,
   resultFilterData,
+  listStaff,
 }: IBoxFilterListCustomer) => {
   const [daysRemaining, setDaysRemaining] = useState<number | undefined>(undefined);
   const [day_remaining_type, setDay_remaining_type] = useState<string>('less');
@@ -28,20 +29,7 @@ const BoxFilterListCustomer = ({
   const [nav_Hight, setNav_Hight] = useState<number | undefined>(undefined);
   const [careby, setCareby] = useState<string>('');
   const [saleName, setSaleName] = useState('');
-  const [optionSalePosition, setOptionSalePosition] = useState([
-    {
-      id: 1,
-      value: 'Nhân viên 1',
-    },
-    {
-      id: 2,
-      value: 'Nhân viên 2',
-    },
-    {
-      id: 3,
-      value: 'Nhân viên 3',
-    },
-  ]);
+  const [optionSalePosition, setOptionSalePosition] = useState<{ value: string }[]>([]);
 
   const selectBefore = (
     <Select
@@ -73,6 +61,10 @@ const BoxFilterListCustomer = ({
 
     resultFilterData(queryFilter as filterQueryType);
   };
+
+  useEffect(() => {
+    setOptionSalePosition(listStaff);
+  }, [listStaff]);
 
   return (
     <Space
@@ -147,8 +139,8 @@ const BoxFilterListCustomer = ({
           placeholder="Tên nhân viên"
           filterOption={(inputValue, option) => option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
           size="large"
-          onChange={value => setSaleName(value)}
-          value={saleName}
+          onChange={value => setCareby(value)}
+          value={careby}
         />
       </Space>
       <Space>
