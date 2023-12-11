@@ -4,60 +4,87 @@ import type { DatePickerProps } from 'antd';
 import './index.less';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, DatePicker, Drawer, Space, Table, Typography } from 'antd';
+import { Button, DatePicker, Drawer, Skeleton, Space, Table, Typography } from 'antd';
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
-import { listEmployeeApi } from '@/api/ttd_list_employee';
 import HeadTitle from '@/pages/components/head-title/HeadTitle';
 
 const { Text, Title } = Typography;
 
+import moment from 'moment';
 import { useSelector } from 'react-redux';
 
+import { listCommissionStatistics } from '@/api/ttd_list_commission_statistics';
 import ExportExcel from '@/pages/components/button-export-excel/ExportExcel';
 
 import { Column } from './columns';
 
-const { getListEmployee } = listEmployeeApi;
+const { getCommissionStatistics } = listCommissionStatistics;
 
-export const salePosition = ['Trưởng phòng', 'Giám đốc kinh doanh', 'Giám đốc khối', 'Giám đốc vùng'];
+const today = moment(new Date()).format('YYYY/MM');
 
 const CommissionStatistics: React.FC = () => {
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
-  const [total, setTotal] = useState(0);
 
-  const [listCustomerSp, setListCustomerSp] = useState<DataType[]>([]);
-  const [customerSelect, setCustomerSelect] = useState<any>();
+  const [totalCommession, setTotalCommession] = useState(0);
+
+  const [listSale, setListSale] = useState<DataType[]>([]);
+  const [listManager, setListManager] = useState<DataType[]>([]);
+  const [listDirector, setListDirector] = useState<DataType[]>([]);
+
+  const [period, setPeriod] = useState(`${today}/01`);
 
   const { user } = useSelector(state => state.user);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['getListEmployee'],
-    queryFn: () => getListEmployee(),
+    queryKey: ['getCommissionStatistics', period],
+    queryFn: () => getCommissionStatistics(period),
   });
 
-  const onClose = () => {
-    setOpen(false);
-  };
-
   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
+    setPeriod(dateString);
   };
 
   useEffect(() => {
     if (!data) return;
 
     if (data) {
-      const columns = data?.data?.rows?.map((item: any) => {
+      const columnsSale = data?.data?.contract?.sale?.map((item: any) => {
         return {
           ...item,
-          level: salePosition[item?.SaleLevel?.level - 1],
+          date: moment(item?.date).format('DD/MM/YYYY'),
+          content: item?.content
+            ?.split('_')
+            ?.map((text: string) => text.charAt(0).toUpperCase() + text.slice(1))
+            ?.join(' '),
+        };
+      });
+      const columnsManager = data?.data?.contract?.manager?.map((item: any) => {
+        return {
+          ...item,
+          date: moment(item?.date).format('DD/MM/YYYY'),
+          content: item?.content
+            ?.split('_')
+            ?.map((text: string) => text.charAt(0).toUpperCase() + text.slice(1))
+            ?.join(' '),
+        };
+      });
+      const columnsDirector = data?.data?.contract?.director?.map((item: any) => {
+        return {
+          ...item,
+          date: moment(item?.date).format('DD/MM/YYYY'),
+          content: item?.content
+            ?.split('_')
+            ?.map((text: string) => text.charAt(0).toUpperCase() + text.slice(1))
+            ?.join(' '),
         };
       });
 
-      setListCustomerSp(columns);
-      setTotal(data?.data?.count);
+      setListSale(columnsSale);
+      setListManager(columnsManager);
+      setListDirector(columnsDirector);
+      setTotalCommession(data?.data?.total);
     }
   }, [data]);
 
@@ -65,18 +92,18 @@ const CommissionStatistics: React.FC = () => {
     <div className="aaa" style={{ padding: '0 12px' }}>
       <HeadTitle title="Thống kê hoa hồng" />
       <Space direction="vertical">
-        <Space direction="vertical">
+        <Space direction="horizontal">
           <Text strong>Chọn kỳ: </Text>
           <Space>
-            <DatePicker onChange={onChange} picker="month" format="MM/YYYY" />
-            <Button type="primary">Tính toán</Button>
+            <DatePicker defaultValue={dayjs(today, 'YYYY/MM')} format={'YYYY/MM'} picker="month" onChange={onChange} />
           </Space>
         </Space>
       </Space>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Space size="large">
           <Title level={4}>Tổng hoa hồng trong kỳ:</Title>
-          <Title level={3}>{Number(12345645).toLocaleString()}</Title>
+          <Title level={3}>{Number(totalCommession).toLocaleString()}</Title>
+          <Skeleton />
         </Space>
         <ExportExcel />
       </div>
@@ -85,11 +112,11 @@ const CommissionStatistics: React.FC = () => {
         {/* <Result total={total} isButtonExcel={false} /> */}
         <div className="table_user">
           <Table
-            columns={Column(listCustomerSp, setTotal)}
-            rowKey={record => record.id}
-            dataSource={[]}
+            columns={Column()}
+            dataSource={listSale}
             scroll={{ x: 'max-content', y: '100%' }}
             style={{ height: 'auto' }}
+            loading={isLoading}
           />
         </div>
       </div>
@@ -99,11 +126,11 @@ const CommissionStatistics: React.FC = () => {
         {/* <Result total={total} isButtonExcel={false} /> */}
         <div className="table_user">
           <Table
-            columns={Column(listCustomerSp, setTotal, 'saleManager')}
-            rowKey={record => record.id}
-            dataSource={[]}
+            columns={Column('saleManager')}
+            dataSource={listManager}
             scroll={{ x: 'max-content', y: '100%' }}
             style={{ height: 'auto' }}
+            loading={isLoading}
           />
         </div>
       </div>
@@ -114,25 +141,15 @@ const CommissionStatistics: React.FC = () => {
           {/* <Result total={total} isButtonExcel={false} /> */}
           <div className="table_user">
             <Table
-              columns={Column(listCustomerSp, setTotal, 'manager')}
-              rowKey={record => record.id}
-              dataSource={[]}
+              columns={Column('manager')}
+              dataSource={listDirector}
               scroll={{ x: 'max-content', y: '100%' }}
               style={{ height: 'auto' }}
+              loading={isLoading}
             />
           </div>
         </div>
       )}
-
-      <Drawer
-        title={!customerSelect ? 'Tạo mới quản trị viên' : 'Chỉnh sửa '}
-        width={360}
-        onClose={onClose}
-        open={open}
-        bodyStyle={{ paddingBottom: 80 }}
-      >
-        {/* <EditUserManagement initForm={customerSelect} useSale={useSale} /> */}
-      </Drawer>
     </div>
   );
 };

@@ -2,14 +2,12 @@ import type { TablePaginationConfig } from 'antd';
 import type { FilterValue } from 'antd/es/table/interface';
 
 export interface DataType {
-  id: string;
-  avatar_url: string;
-  email: string;
-  fullname: string;
-  phone_number: string;
-  level: string;
-
-  staff_code: string;
+  amount: number;
+  commission: number;
+  content: string;
+  customer_code: string;
+  date: string;
+  staff_code?: string;
 }
 
 export interface TableParams {

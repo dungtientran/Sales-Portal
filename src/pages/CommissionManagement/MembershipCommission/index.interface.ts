@@ -8,7 +8,6 @@ export interface DataType {
   fullname: string;
   phone_number: string;
   level: string;
-
   staff_code: string;
 }
 
