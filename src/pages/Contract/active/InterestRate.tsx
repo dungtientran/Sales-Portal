@@ -63,7 +63,7 @@ const InterestRate: React.FC = () => {
   const [total, setTotal] = useState(0);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['getListContractDone'],
+    queryKey: ['getListContractPending'],
     queryFn: () => getListContract('pending'),
   });
 
