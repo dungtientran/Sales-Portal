@@ -1,4 +1,4 @@
-import type { filterQueryType } from './InterestRate';
+import type { filterQueryType } from './BlockContract';
 import type { RadioChangeEvent } from 'antd';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 

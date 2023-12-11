@@ -34,31 +34,31 @@ export const menuListHandle: MenuList = [
       // },
     ],
   },
-  {
-    code: 'customer-management',
-    icon: 'notification',
-    label: {
-      en_US: 'Quản lý khách hàng',
-      zh_CN: '文档',
-    },
-    path: '/documentation',
-    children: [
-      {
-        code: 'service-pack',
-        label: {
-          en_US: 'Danh sách khách hàng',
-          zh_CN: '基本',
-        },
-        path: '/customer-management/list-customer',
-      },
-    ],
-  },
+  // {
+  //   code: 'customer-management',
+  //   icon: 'notification',
+  //   label: {
+  //     en_US: 'Quản lý khách hàng',
+  //     zh_CN: '文档',
+  //   },
+  //   path: '/documentation',
+  //   children: [
+  //     {
+  //       code: 'service-pack',
+  //       label: {
+  //         en_US: 'Danh sách khách hàng',
+  //         zh_CN: '基本',
+  //       },
+  //       path: '/customer-management/list-customer',
+  //     },
+  //   ],
+  // },
 
   {
     code: 'contract',
     icon: 'contract',
     label: {
-      en_US: 'Quản lý hợp đồng ',
+      en_US: 'Quản lý kinh doanh ',
       zh_CN: '文档',
     },
     path: '/documentation',
@@ -82,10 +82,10 @@ export const menuListHandle: MenuList = [
     ],
   },
   {
-    code: 'interest-rate',
+    code: 'commission-management',
     icon: 'rate',
     label: {
-      en_US: 'Quản lý hoa hồng',
+      en_US: 'Thống kê hoa hồng',
       zh_CN: '文档',
     },
     path: '/documentation',
@@ -93,10 +93,26 @@ export const menuListHandle: MenuList = [
       {
         code: 'service-pack',
         label: {
+          en_US: 'Tổng hoa hồng',
+          zh_CN: '基本',
+        },
+        path: '/commission-management/commission-statistics',
+      },
+      {
+        code: 'service-pack',
+        label: {
+          en_US: 'Hoa hồng tạm tính',
+          zh_CN: '基本',
+        },
+        path: '/commission-management/temporary-commission',
+      },
+      {
+        code: 'service-pack',
+        label: {
           en_US: 'Hoa hồng thành viên',
           zh_CN: '基本',
         },
-        path: '/interest-rate/set-interest-rate',
+        path: '/commission-management/membership-commission',
       },
     ],
   },

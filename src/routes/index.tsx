@@ -16,7 +16,6 @@ const NotFound = lazy(() => import('@/pages/404'));
 // Product Management
 
 const ListOfEmployee = lazy(() => import('@/pages/TeamManagement/ListOfEmployee/ListOfEmployee'));
-const MembershipCommission = lazy(() => import('@/pages/TeamManagement/MembershipCommission/MembershipCommission'));
 
 const CustomerGroup = lazy(() => import('@/pages/CustomerManagement/CustomerGroup/CustomerGroup'));
 const ListCustomers = lazy(() => import('@/pages/CustomerManagement/ListCustomers/ListCustomers'));
@@ -24,18 +23,16 @@ const ListRequests = lazy(() => import('@/pages/CustomerManagement/ListRequests/
 
 const InterestRate = lazy(() => import('@/pages/Contract/active/InterestRate'));
 const BlockContract = lazy(() => import('@/pages/Contract/block/BlockContract'));
-const SetInterestRate = lazy(() => import('@/pages/InterestRate/SetInterestRate/SetInterestRate'));
 
-const TransactionHistory = lazy(() => import('@/pages/FinancialManagement/transaction-history/TransactionHistory'));
+// Quản lý kinh doanh
 
-const UserManagement = lazy(() => import('@/pages/UserManagement/UserManagement/UserManagement'));
-const Invoice = lazy(() => import('@/pages/Invoice/InvoiceTablePage'));
-const InvoiceDetail = lazy(() => import('@/pages/Invoice/InvoiceDetail'));
-
-const Greeting = lazy(() => import('@/pages/Application/Greeting/Greeting'));
-const Support = lazy(() => import('@/pages/Application/Support/Support'));
-
-const Notification = lazy(() => import('@/pages/Notification/Notification'));
+const CommissionStatistics = lazy(
+  () => import('@/pages/CommissionManagement/CommissionStatistics/CommissionStatistics'),
+);
+const MembershipCommission = lazy(() => import('@/pages/CommissionManagement/TemporaryCommission/TemporaryCommission'));
+const TemporaryCommission = lazy(
+  () => import('@/pages/CommissionManagement/MembershipCommission/MembershipCommission'),
+);
 
 const routeList: RouteObject[] = [
   {
@@ -54,13 +51,23 @@ const routeList: RouteObject[] = [
       //   path: 'dashboard',
       //   element: <WrapperRouteComponent element={<Dashboard />} titleId="title.dashboard" />,
       // },
+      // Quản lý đội nhóm
       {
         path: '/team-managament/list-of-employee',
         element: <WrapperRouteComponent element={<ListOfEmployee />} titleId="Danh sách nhân viên" />,
       },
+      // Thống kê hoa hồng
       {
-        path: '/team-managament/membership-commission',
-        element: <WrapperRouteComponent element={<MembershipCommission />} titleId="Hoa hồng thành viên" />,
+        path: '/commission-management/commission-statistics',
+        element: <WrapperRouteComponent element={<CommissionStatistics />} titleId="Tổng hoa hồng" />,
+      },
+      {
+        path: '/commission-management/temporary-commission',
+        element: <WrapperRouteComponent element={<MembershipCommission />} titleId="Hoa hồng tạm tính" />,
+      },
+      {
+        path: '/commission-management/membership-commission',
+        element: <WrapperRouteComponent element={<TemporaryCommission />} titleId="Hoa hồng thành viên" />,
       },
       {
         path: 'customer-management/list-customer',
@@ -72,47 +79,12 @@ const routeList: RouteObject[] = [
       },
       //
       {
-        path: '/interest-rate/set-interest-rate',
-        element: <WrapperRouteComponent element={<SetInterestRate />} titleId="Thiết lập hoa hồng" />,
-      },
-      {
         path: '/contract/active',
         element: <WrapperRouteComponent element={<InterestRate />} titleId="Hợp đồng còn hiệu lực" />,
       },
       {
         path: '/contract/block',
         element: <WrapperRouteComponent element={<BlockContract />} titleId="Hợp đồng đã thanh lý" />,
-      },
-      //
-      {
-        path: '/transaction/transaction-history',
-        element: <WrapperRouteComponent element={<TransactionHistory />} titleId="Lịch sử giao dịch" />,
-      },
-      //
-      {
-        path: '/user-management/list',
-        element: <WrapperRouteComponent element={<UserManagement />} titleId="Danh sách quản trị viên" />,
-      },
-      {
-        path: '/transaction/invoice/list',
-        element: <WrapperRouteComponent element={<Invoice />} titleId="Danh sách chứng từ thanh toán!" />,
-      },
-      {
-        path: '/invoice/detail/:id',
-        element: <WrapperRouteComponent element={<InvoiceDetail />} titleId="Danh sách chứng từ thanh toán!" />,
-      },
-      //
-      {
-        path: '/application/greeting',
-        element: <WrapperRouteComponent element={<Greeting />} titleId="Thiết lập câu chào" />,
-      },
-      {
-        path: '/application/support',
-        element: <WrapperRouteComponent element={<Support />} titleId="Thiết lập liên kết hỗ trợ" />,
-      },
-      {
-        path: '/notification',
-        element: <WrapperRouteComponent element={<Notification />} titleId="Thiết lập thông báo" />,
       },
       {
         path: '*',
