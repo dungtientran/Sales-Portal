@@ -159,12 +159,6 @@ export const Column = () => {
       sorter: (a, b) => Number(a.profit_percent) - Number(b.profit_percent),
     },
     {
-      title: 'Hoa hồng Fila',
-      dataIndex: 'commission',
-      sorter: (a, b) => Number(a.commission) - Number(b.commission),
-      render: (_, record) => <Text>{record?.commission?.toLocaleString()}</Text>,
-    },
-    {
       title: 'Hoa hồng Sales',
       dataIndex: 'sales_commission',
       render: (_, record) => <Text>{record?.sales_commission?.toLocaleString()}</Text>,

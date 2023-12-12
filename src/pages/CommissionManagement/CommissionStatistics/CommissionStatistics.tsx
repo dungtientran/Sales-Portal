@@ -34,6 +34,10 @@ const CommissionStatistics: React.FC = () => {
   const [listManager, setListManager] = useState<DataType[]>([]);
   const [listDirector, setListDirector] = useState<DataType[]>([]);
 
+  const [totalSale, setTotalSale] = useState(0);
+  const [totalManager, setTotalManager] = useState(0);
+  const [totalDirector, setTotalDirector] = useState(0);
+
   const [period, setPeriod] = useState(`${today}/01`);
 
   const { user } = useSelector(state => state.user);
@@ -52,6 +56,8 @@ const CommissionStatistics: React.FC = () => {
 
     if (data) {
       const columnsSale = data?.data?.contract?.sale?.map((item: any) => {
+        setTotalSale(prev => prev + (item?.commission || 0));
+
         return {
           ...item,
           date: moment(item?.date).format('DD/MM/YYYY'),
@@ -62,6 +68,8 @@ const CommissionStatistics: React.FC = () => {
         };
       });
       const columnsManager = data?.data?.contract?.manager?.map((item: any) => {
+        setTotalManager(prev => prev + (item?.commission || 0));
+
         return {
           ...item,
           date: moment(item?.date).format('DD/MM/YYYY'),
@@ -73,6 +81,8 @@ const CommissionStatistics: React.FC = () => {
         };
       });
       const columnsDirector = data?.data?.contract?.director?.map((item: any) => {
+        setTotalDirector(prev => prev + (item?.commission || 0));
+
         return {
           ...item,
           date: moment(item?.date).format('DD/MM/YYYY'),
@@ -121,7 +131,13 @@ const CommissionStatistics: React.FC = () => {
         />
       </div>
       <div>
-        <Title level={4}>Hoa hồng cá nhân</Title>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Title level={4}>Hoa hồng cá nhân</Title>
+          <Space>
+            <Text>Tổng:</Text>
+            <Text strong>{Number(totalSale).toLocaleString()}</Text>
+          </Space>
+        </div>
         {/* <Result total={total} isButtonExcel={false} /> */}
         <div className="">
           <Table
@@ -135,8 +151,13 @@ const CommissionStatistics: React.FC = () => {
       </div>
 
       <div>
-        <Title level={4}>Hoa hồng vị trí trưởng phòng</Title>
-        {/* <Result total={total} isButtonExcel={false} /> */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Title level={4}>Hoa hồng vị trí trưởng phòng</Title>
+          <Space>
+            <Text>Tổng:</Text>
+            <Text strong>{Number(totalManager).toLocaleString()}</Text>
+          </Space>
+        </div>
         <div className="">
           <Table
             columns={Column('saleManager')}
@@ -150,8 +171,13 @@ const CommissionStatistics: React.FC = () => {
 
       {user?.SaleLevel?.level >= 2 && (
         <div>
-          <Title level={4}>Hoa hồng vị trí giám đốc</Title>
-          {/* <Result total={total} isButtonExcel={false} /> */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Title level={4}>Hoa hồng vị trí giám đốc</Title>
+            <Space>
+              <Text>Tổng:</Text>
+              <Text strong>{Number(totalDirector).toLocaleString()}</Text>
+            </Space>
+          </div>
           <div className="">
             <Table
               columns={Column('manager')}
