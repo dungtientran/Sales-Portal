@@ -16,15 +16,11 @@ const ExportExcel: React.FC<IExportExcel> = ({ columns, dataSource, title }) => 
 
     dataSource.forEach((record: any) => {
       const row = columns.map((col: any) => {
-        // console.log('col__________________', col);
         return record[col.dataIndex];
       });
 
-      // console.log('row______________', row);
       worksheet.addRow(row);
     });
-
-    // console.log('worksheet_____________________', worksheet);
 
     workbook.xlsx.writeBuffer().then(buffer => {
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });

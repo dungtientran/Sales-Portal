@@ -133,11 +133,9 @@ const InterestRate: React.FC = () => {
           commission: item?.contract_commission?.fila_commission,
           status: item?.status === 'pending' ? 'Đang có hiệu lực' : 'Đã thanh lý',
           profit_percent: item?.profit_percent,
-          total_commission:
-            item?.contract_commission?.director_commission +
-            item?.contract_commission?.fila_commission +
-            item?.contract_commission?.manager_commission +
-            item?.contract_commission?.sales_commission,
+          sales_commission: item?.contract_commission?.sales_commission,
+          manager_commission: item?.contract_commission?.manager_commission,
+          director_commission: item?.contract_commission?.director_commission,
         };
       });
 

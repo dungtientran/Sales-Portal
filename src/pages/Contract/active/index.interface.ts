@@ -73,6 +73,9 @@ export interface ColumnTyle {
   id: number;
   profit_percent: number;
   total_commission: number;
+  director_commission: number;
+  sales_commission: number;
+  manager_commission: number;
 }
 export interface TableParams {
   pagination?: TablePaginationConfig;

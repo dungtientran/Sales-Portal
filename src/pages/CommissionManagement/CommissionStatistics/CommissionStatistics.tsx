@@ -18,6 +18,7 @@ import { useSelector } from 'react-redux';
 import { listCommissionStatistics } from '@/api/ttd_list_commission_statistics';
 import ExportExcel from '@/pages/components/button-export-excel/ExportExcel';
 
+import ExportExcelButton from '../BtnExportExcel/BtnExportExcel';
 import { Column } from './columns';
 
 const { getCommissionStatistics } = listCommissionStatistics;
@@ -105,7 +106,7 @@ const CommissionStatistics: React.FC = () => {
           <Title level={3}>{Number(totalCommession).toLocaleString()}</Title>
           <Skeleton />
         </Space>
-        <ExportExcel />
+        <ExportExcelButton dataSource1={listSale} dataSource2={listManager} dataSource3={listDirector} />
       </div>
       <div>
         <Title level={4}>Hoa hồng cá nhân</Title>
