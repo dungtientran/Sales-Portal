@@ -110,7 +110,7 @@ const CommissionStatistics: React.FC = () => {
       <div>
         <Title level={4}>Hoa hồng cá nhân</Title>
         {/* <Result total={total} isButtonExcel={false} /> */}
-        <div className="table_user">
+        <div className="">
           <Table
             columns={Column()}
             dataSource={listSale}
@@ -124,7 +124,7 @@ const CommissionStatistics: React.FC = () => {
       <div>
         <Title level={4}>Hoa hồng vị trí trưởng phòng</Title>
         {/* <Result total={total} isButtonExcel={false} /> */}
-        <div className="table_user">
+        <div className="">
           <Table
             columns={Column('saleManager')}
             dataSource={listManager}
@@ -139,7 +139,7 @@ const CommissionStatistics: React.FC = () => {
         <div>
           <Title level={4}>Hoa hồng vị trí giám đốc</Title>
           {/* <Result total={total} isButtonExcel={false} /> */}
-          <div className="table_user">
+          <div className="">
             <Table
               columns={Column('manager')}
               dataSource={listDirector}
