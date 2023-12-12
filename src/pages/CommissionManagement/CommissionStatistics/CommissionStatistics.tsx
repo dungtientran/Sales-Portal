@@ -69,6 +69,7 @@ const CommissionStatistics: React.FC = () => {
             ?.split('_')
             ?.map((text: string) => text.charAt(0).toUpperCase() + text.slice(1))
             ?.join(' '),
+          staff_code: item?.staff_code,
         };
       });
       const columnsDirector = data?.data?.contract?.director?.map((item: any) => {
@@ -79,6 +80,7 @@ const CommissionStatistics: React.FC = () => {
             ?.split('_')
             ?.map((text: string) => text.charAt(0).toUpperCase() + text.slice(1))
             ?.join(' '),
+          staff_code: item?.staff_code,
         };
       });
 
@@ -106,7 +108,17 @@ const CommissionStatistics: React.FC = () => {
           <Title level={3}>{Number(totalCommession).toLocaleString()}</Title>
           <Skeleton />
         </Space>
-        <ExportExcelButton dataSource1={listSale} dataSource2={listManager} dataSource3={listDirector} />
+        <ExportExcelButton
+          dataSource1={listSale}
+          dataSource2={listManager}
+          dataSource3={listDirector}
+          columns1={Column()}
+          columns2={Column('saleManager')}
+          columns3={Column('manager')}
+          title="Thống kê hoa hồng"
+          disable={isLoading}
+          saleLevel={user?.SaleLevel?.level}
+        />
       </div>
       <div>
         <Title level={4}>Hoa hồng cá nhân</Title>

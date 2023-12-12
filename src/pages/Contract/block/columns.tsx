@@ -178,7 +178,7 @@ export const Column = () => {
     },
   ];
 
-  if (saleLevel >= 1) {
+  if (saleLevel > 1) {
     columns.push({
       title: 'Hoa hồng giám đốc',
       dataIndex: 'director_commission',

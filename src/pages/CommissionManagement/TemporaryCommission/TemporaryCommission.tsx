@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import { listCommissionStatistics } from '@/api/ttd_list_commission_statistics';
 import ExportExcel from '@/pages/components/button-export-excel/ExportExcel';
 
+import ExportExcelButton from '../BtnExportExcel/BtnExportExcel';
 import { Column } from './columns';
 
 const { getTemporaryCommission } = listCommissionStatistics;
@@ -65,6 +66,7 @@ const TemporaryCommission: React.FC = () => {
             ?.split('_')
             ?.map((text: string) => text.charAt(0).toUpperCase() + text.slice(1))
             ?.join(' '),
+          staff_code: item?.staff_code,
         };
       });
       const columnsDirector = data?.data?.contract?.director?.map((item: any) => {
@@ -75,6 +77,7 @@ const TemporaryCommission: React.FC = () => {
             ?.split('_')
             ?.map((text: string) => text.charAt(0).toUpperCase() + text.slice(1))
             ?.join(' '),
+          staff_code: item?.staff_code,
         };
       });
 
@@ -84,7 +87,6 @@ const TemporaryCommission: React.FC = () => {
       setTotalCommession(data?.data?.total);
     }
   }, [data]);
-  console.log('listDirector______________________________', listDirector);
 
   return (
     <div className="aaa" style={{ padding: '0 12px' }}>
@@ -95,7 +97,17 @@ const TemporaryCommission: React.FC = () => {
           <Title level={4}>Tổng hoa hồng tạm tính:</Title>
           <Title level={3}>{Number(totalCommession).toLocaleString()}</Title>
         </Space>
-        <ExportExcel />
+        <ExportExcelButton
+          dataSource1={listSale}
+          dataSource2={listManager}
+          dataSource3={listDirector}
+          columns1={Column()}
+          columns2={Column('saleManager')}
+          columns3={Column('manager')}
+          title="Hoa hồng tạm tính"
+          disable={isLoading}
+          saleLevel={user?.SaleLevel?.level}
+        />
       </div>
       <div>
         <Title level={4}>Hoa hồng cá nhân</Title>
