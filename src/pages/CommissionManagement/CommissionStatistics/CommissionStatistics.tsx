@@ -38,17 +38,22 @@ const CommissionStatistics: React.FC = () => {
   const [totalManager, setTotalManager] = useState(0);
   const [totalDirector, setTotalDirector] = useState(0);
 
-  const [period, setPeriod] = useState(`${today}/01`);
+  const [period, setPeriod] = useState(today);
 
   const { user } = useSelector(state => state.user);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['getCommissionStatistics', period],
-    queryFn: () => getCommissionStatistics(period),
+    queryFn: () => getCommissionStatistics(`${period}/01`),
   });
 
   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    setPeriod(dateString);
+    if (dateString && dateString !== period) {
+      setPeriod(dateString);
+      setTotalSale(0);
+      setTotalManager(0);
+      setTotalDirector(0);
+    }
   };
 
   useEffect(() => {
