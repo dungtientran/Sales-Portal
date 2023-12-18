@@ -5,8 +5,13 @@ import type { ColumnsType, FilterConfirmProps } from 'antd/es/table/interface';
 
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Input, Space, Typography } from 'antd';
+import moment from 'moment';
 import { useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+
+import { addTag } from '@/stores/tags-view.store';
 
 const { Text } = Typography;
 
@@ -105,55 +110,81 @@ export const ColumnSearchProps = (
   };
 };
 
-export const Column = (
-  listCustomerSp: DataType[],
-  setTotal: (total: number) => void,
-  type?: 'saleManager' | 'manager',
-) => {
+export const Column = () => {
+  const { user } = useSelector(state => state.user);
+
+  const levelSale = user?.SaleLevel?.level;
+
+  const dispatch = useDispatch();
+
+  const handelAddTag = (id: string, name: string) => {
+    dispatch(
+      addTag({
+        code: 'con tro lơ',
+        closable: true,
+        label: {
+          en_US: `${name}`,
+          zh_CN: 'asdas',
+        },
+        path: `/commission-management/membership-commission/${id}`,
+      }),
+    );
+  };
+
   const columns: ColumnsType<DataType> = [
     {
-      title: 'Ngày phát sinh',
+      title: 'Kỳ',
+      dataIndex: 'period',
+      width: '8%',
+      render: (_, record) => <Text>{moment(record?.period).format('YYYY/MM')}</Text>,
+    },
+    {
+      title: 'Mã nhân viên',
       dataIndex: 'staff_code',
       width: '8%',
+      render: (_, record) => (
+        <Link
+          to={`/commission-management/membership-commission/${record?.staff_code}?period=${record?.period}`}
+          onClick={() => handelAddTag(record?.staff_code, record?.staff_code)}
+        >
+          {record?.staff_code}
+        </Link>
+      ),
     },
     {
-      title: 'Nội dung',
-      dataIndex: 'fullname',
-      width: '8%',
-    },
-    {
-      title: 'Mã khách hàng',
-      dataIndex: 'phone_number',
+      title: 'Hoa hồng từ đăng ký',
+      dataIndex: 'sub_commission',
       width: '15%',
+      render: (_, record) => <Text>{record?.sub_commission?.toLocaleString()}</Text>,
     },
     {
-      title: 'Doanh số/LN',
-      dataIndex: 'email',
+      title: 'Hoa hồng hợp đồng',
+      dataIndex: 'contract_commission',
+      render: (_, record) => <Text>{record?.contract_commission?.toLocaleString()}</Text>,
+
       width: '14%',
     },
     {
-      title: 'Hoa hồng',
-      dataIndex: 'role',
+      title: 'Hoa hồng cấp trưởng phòng',
+      dataIndex: 'manager_commission',
       width: '14%',
-      render: () => <Text>Sale</Text>,
+      render: (_, record) => <Text>{record?.manager_commission?.toLocaleString()}</Text>,
+    },
+
+    {
+      title: 'Tổng cộng',
+      dataIndex: 'total',
+      width: '14%',
+      render: (_, record) => <Text>{record?.total?.toLocaleString()}</Text>,
     },
   ];
 
-  if (type === 'saleManager') {
-    columns.splice(2, 0, {
-      title: 'Nhân viên',
-      dataIndex: 'role',
+  if (levelSale > 1) {
+    columns.splice(5, 0, {
+      title: 'Hoa hồng cấp giám đốc',
+      dataIndex: 'director_commission',
       width: '14%',
-      render: () => <Text>nhân viên</Text>,
-    });
-  }
-
-  if (type === 'manager') {
-    columns.splice(2, 0, {
-      title: 'Trưởng phòng',
-      dataIndex: 'role',
-      width: '14%',
-      render: () => <Text>nhân viên</Text>,
+      render: (_, record) => <Text>{record?.director_commission?.toLocaleString()}</Text>,
     });
   }
 

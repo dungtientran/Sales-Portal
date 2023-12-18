@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 
-import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons';
-import { Dropdown, Layout, Space, theme as antTheme, Tooltip, Typography } from 'antd';
-import { createElement } from 'react';
+import { LockOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { Dropdown, Layout, Modal, Space, theme as antTheme, Tooltip, Typography } from 'antd';
+import { createElement, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,6 +19,7 @@ import { setUserItem } from '@/stores/user.store';
 
 import { logoutAsync } from '../../stores/user.action';
 import { salePosition } from '../UserManagement/UserManagement/UserManagement';
+import FormChangePassword from './formChangePassword';
 import HeaderNoticeComponent from './notice';
 
 const { Header } = Layout;
@@ -34,6 +35,8 @@ type Action = 'userInfo' | 'userSetting' | 'logout';
 const HeaderComponent: FC<HeaderProps> = ({ collapsed, toggle }) => {
   const { logged, locale, device, user } = useSelector(state => state.user);
   const { theme } = useSelector(state => state.global);
+  const [open, setOpen] = useState(false);
+
   const navigate = useNavigate();
   const token = antTheme.useToken();
   const dispatch = useDispatch();
@@ -136,12 +139,8 @@ const HeaderComponent: FC<HeaderProps> = ({ collapsed, toggle }) => {
                 items: [
                   {
                     key: '1',
-                    icon: <UserOutlined />,
-                    label: (
-                      <span onClick={() => {}}>
-                        <LocaleFormatter id="header.avator.account" />
-                      </span>
-                    ),
+                    icon: <LockOutlined />,
+                    label: <span onClick={() => setOpen(true)}>Đổi mật khẩu</span>,
                   },
                   {
                     key: '2',
@@ -165,6 +164,17 @@ const HeaderComponent: FC<HeaderProps> = ({ collapsed, toggle }) => {
             </span>
           )}
         </div>
+        <Modal
+          title="Thay đổi mật khẩu"
+          centered
+          open={open}
+          onOk={() => setOpen(false)}
+          onCancel={() => setOpen(false)}
+          // width={1000}
+          footer={false}
+        >
+          <FormChangePassword />
+        </Modal>
       </div>
     </Header>
   );

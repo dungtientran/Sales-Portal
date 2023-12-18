@@ -33,6 +33,9 @@ const MembershipCommission = lazy(() => import('@/pages/CommissionManagement/Tem
 const TemporaryCommission = lazy(
   () => import('@/pages/CommissionManagement/MembershipCommission/MembershipCommission'),
 );
+const MembershipCommissionDetails = lazy(
+  () => import('@/pages/CommissionManagement/MembershipCommission/Details/Details'),
+);
 
 const routeList: RouteObject[] = [
   {
@@ -68,6 +71,10 @@ const routeList: RouteObject[] = [
       {
         path: '/commission-management/membership-commission',
         element: <WrapperRouteComponent element={<TemporaryCommission />} titleId="Hoa hồng thành viên" />,
+      },
+      {
+        path: '/commission-management/membership-commission/:id',
+        element: <WrapperRouteComponent element={<MembershipCommissionDetails />} titleId="Chi tiết hoa hồng" />,
       },
       {
         path: 'customer-management/list-customer',

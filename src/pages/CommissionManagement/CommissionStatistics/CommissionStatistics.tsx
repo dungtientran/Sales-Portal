@@ -12,10 +12,12 @@ import HeadTitle from '@/pages/components/head-title/HeadTitle';
 
 const { Text, Title } = Typography;
 
+import type { RangePickerProps } from 'antd/es/date-picker';
+
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 
-import { listCommissionStatistics } from '@/api/ttd_list_commission_statistics';
+import { listCommissionStatistics } from '@/api/ttd_list_commission';
 import ExportExcel from '@/pages/components/button-export-excel/ExportExcel';
 
 import ExportExcelButton from '../BtnExportExcel/BtnExportExcel';
@@ -24,6 +26,10 @@ import { Column } from './columns';
 const { getCommissionStatistics } = listCommissionStatistics;
 
 const today = moment(new Date()).format('YYYY/MM');
+
+const disabledDate: RangePickerProps['disabledDate'] = current => {
+  return current && current > dayjs().subtract(1, 'month').endOf('month');
+};
 
 const CommissionStatistics: React.FC = () => {
   const queryClient = useQueryClient();
@@ -113,7 +119,13 @@ const CommissionStatistics: React.FC = () => {
         <Space direction="horizontal">
           <Text strong>Chọn kỳ: </Text>
           <Space>
-            <DatePicker defaultValue={dayjs(today, 'YYYY/MM')} format={'YYYY/MM'} picker="month" onChange={onChange} />
+            <DatePicker
+              defaultValue={dayjs(today, 'YYYY/MM')}
+              format={'YYYY/MM'}
+              picker="month"
+              onChange={onChange}
+              // disabledDate={disabledDate}
+            />
           </Space>
         </Space>
       </Space>
