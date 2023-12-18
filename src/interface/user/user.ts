@@ -1,7 +1,7 @@
+import type { Commission } from '../commission';
 import type { Role } from './login';
 import type { Device } from '@/interface/layout/index.interface';
 import type { MenuChild } from '@/interface/layout/menu.interface';
-import { Commission } from '../commission';
 
 export type Locale = 'zh_CN' | 'en_US';
 
@@ -17,7 +17,6 @@ export interface SaleLevel {
 export interface Wallet {
   amount: number;
 }
-
 
 export interface SaleReport {
   sale_id: AdminModel;
@@ -41,6 +40,7 @@ interface AdminModel {
   }[];
   SaleLevel: SaleLevel;
   Wallet: Wallet;
+  staff_code: string;
 }
 export interface UserState {
   user: AdminModel;

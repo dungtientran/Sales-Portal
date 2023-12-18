@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 
 import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons';
-import { Dropdown, Layout, theme as antTheme, Tooltip } from 'antd';
+import { Dropdown, Layout, Space, theme as antTheme, Tooltip, Typography } from 'antd';
 import { createElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -13,15 +13,16 @@ import { ReactComponent as LanguageSvg } from '@/assets/header/language.svg';
 import Logo from '@/assets/header/logo.png';
 import { ReactComponent as MoonSvg } from '@/assets/header/moon.svg';
 import { ReactComponent as SunSvg } from '@/assets/header/sun.svg';
-import { ReactComponent as ZhCnSvg } from '@/assets/header/zh_CN.svg';
 import { LocaleFormatter, useLocale } from '@/locales';
 import { setGlobalState } from '@/stores/global.store';
 import { setUserItem } from '@/stores/user.store';
 
 import { logoutAsync } from '../../stores/user.action';
+import { salePosition } from '../UserManagement/UserManagement/UserManagement';
 import HeaderNoticeComponent from './notice';
 
 const { Header } = Layout;
+const { Text } = Typography;
 
 interface HeaderProps {
   collapsed: boolean;
@@ -85,6 +86,14 @@ const HeaderComponent: FC<HeaderProps> = ({ collapsed, toggle }) => {
           <span id="sidebar-trigger">{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</span>
         </div>
         <div className="actions">
+          <Space size="middle">
+            <Text>[{user?.staff_code}]</Text>
+            <Space>
+              <Text>{user?.fullname}</Text>
+              <Text>-</Text>
+              <Text>{salePosition?.[Number(user?.SaleLevel?.level) - 1]}</Text>
+            </Space>
+          </Space>
           <Tooltip
             title={formatMessage({
               id: theme === 'dark' ? 'gloabal.tips.theme.lightTooltip' : 'gloabal.tips.theme.darkTooltip',
