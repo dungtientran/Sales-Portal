@@ -117,10 +117,16 @@ const Details: React.FC = () => {
   return (
     <div className="aaa" style={{ padding: '0 12px' }}>
       <HeadTitle title="Chi tiết hoa hồng thành viên" />
-      <Space size="large">
+     <Space direction='vertical' size='small'>
+     <Space size="large">
         <Title level={4}>Kỳ:</Title>
         <Title level={3}>{moment(period).format('YYYY/MM')}</Title>
       </Space>
+      <Space size="large">
+        <Title level={4}>Tổng:</Title>
+        <Title level={3}>{data?.data?.total?.toLocaleString()}</Title>
+      </Space>
+     </Space>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Title level={4}>Hoa hồng từ đăng ký</Title>

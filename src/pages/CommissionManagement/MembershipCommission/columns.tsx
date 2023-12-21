@@ -115,7 +115,6 @@ export const Column = (period?: string) => {
 
   const levelSale = user?.SaleLevel?.level;
 
-  console.log('period_________________________', period);
   const dispatch = useDispatch();
 
   const handelAddTag = (id: string, name: string) => {
