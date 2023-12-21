@@ -11,6 +11,6 @@ export const listCommissionStatistics = {
     return axiosInstance.get(`/user/sale/subordinate_commission?period=${period}`);
   },
   getDetailsMembershipCommission(staff_code: string, period: string): Promise<any> {
-    return axiosInstance.get(`/user/sale/subordinate_commission_in_period_detail/${staff_code}?period=12-01-2023`);
+    return axiosInstance.get(`/user/sale/subordinate_commission_in_period_detail/${staff_code}?period=${period}`);
   },
 };

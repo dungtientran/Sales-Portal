@@ -52,7 +52,7 @@ const Details: React.FC = () => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['getMembershipCommission', period, id],
-    queryFn: () => getDetailsMembershipCommission(id as string, `${period}/01`),
+    queryFn: () => getDetailsMembershipCommission(id as string, `${period}`),
   });
 
   useEffect(() => {

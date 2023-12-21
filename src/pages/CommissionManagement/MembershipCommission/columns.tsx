@@ -110,11 +110,12 @@ export const ColumnSearchProps = (
   };
 };
 
-export const Column = () => {
+export const Column = (period?: string) => {
   const { user } = useSelector(state => state.user);
 
   const levelSale = user?.SaleLevel?.level;
 
+  console.log('period_________________________', period);
   const dispatch = useDispatch();
 
   const handelAddTag = (id: string, name: string) => {
@@ -144,7 +145,7 @@ export const Column = () => {
       width: '8%',
       render: (_, record) => (
         <Link
-          to={`/commission-management/membership-commission/${record?.staff_code}?period=${record?.period}`}
+          to={`/commission-management/membership-commission/${record?.staff_code}?period=${period}`}
           onClick={() => handelAddTag(record?.staff_code, record?.staff_code)}
         >
           {record?.staff_code}

@@ -94,7 +94,7 @@ const MembershipCommission: React.FC = () => {
       <Result total={listCustomerSp?.length} isButtonExcel={false} />
       <div className="">
         <Table
-          columns={Column()}
+          columns={Column(queryFilter.period)}
           dataSource={listCustomerSp}
           scroll={{ x: 'max-content', y: '100%' }}
           style={{ height: 'auto' }}
