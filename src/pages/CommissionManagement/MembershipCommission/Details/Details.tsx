@@ -67,6 +67,20 @@ const Details: React.FC = () => {
       // eslint-disable-next-line prefer-const
       let totalDirectorResponse = 0;
 
+      const columnsSub = data?.data?.contract?.sub?.map((item: any) => {
+        totalCommessionResponse+=item?.commission
+        setTotalCommession(totalCommessionResponse);
+
+        return {
+          ...item,
+          date: moment(item?.date).format('DD/MM/YYYY'),
+          content: item?.content
+            ?.split('_')
+            ?.map((text: string) => text.charAt(0).toUpperCase() + text.slice(1))
+            ?.join(' '),
+        };
+      });
+
       const columnsCommession = data?.data?.contract?.sale?.map((item: any) => {
         totalCommessionResponse+=item?.commission
         setTotalCommession(totalCommessionResponse);
@@ -107,6 +121,7 @@ const Details: React.FC = () => {
         };
       });
 
+      setListSub(columnsSub);
       setListCommession(columnsCommession);
       setListManager(columnsManager);
       setListDirector(columnsDirector);
