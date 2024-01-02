@@ -36,10 +36,12 @@ const CommissionStatistics: React.FC = () => {
 
   const [totalCommession, setTotalCommession] = useState(0);
 
+  const [listSub, setListSub] = useState<DataType[]>([]);
   const [listSale, setListSale] = useState<DataType[]>([]);
   const [listManager, setListManager] = useState<DataType[]>([]);
   const [listDirector, setListDirector] = useState<DataType[]>([]);
 
+  const [totalSub, setTotalSub] = useState(0);
   const [totalSale, setTotalSale] = useState(0);
   const [totalManager, setTotalManager] = useState(0);
   const [totalDirector, setTotalDirector] = useState(0);
@@ -66,6 +68,18 @@ const CommissionStatistics: React.FC = () => {
     if (!data) return;
 
     if (data) {
+      const columnsSub = data?.data?.contract?.sub?.map((item: any) => {
+        setTotalSub(prev => prev + (item?.commission || 0));
+
+        return {
+          ...item,
+          date: moment(item?.date).format('DD/MM/YYYY'),
+          content: item?.content
+            ?.split('_')
+            ?.map((text: string) => text.charAt(0).toUpperCase() + text.slice(1))
+            ?.join(' '),
+        };
+      });
       const columnsSale = data?.data?.contract?.sale?.map((item: any) => {
         setTotalSale(prev => prev + (item?.commission || 0));
 
@@ -105,12 +119,14 @@ const CommissionStatistics: React.FC = () => {
         };
       });
 
+      setListSub(columnsSub);
       setListSale(columnsSale);
       setListManager(columnsManager);
       setListDirector(columnsDirector);
       setTotalCommession(data?.data?.total);
     }
   }, [data]);
+  console.log('_________________________________________________________', listSub);
 
   return (
     <div className="aaa" style={{ padding: '0 12px' }}>
@@ -146,6 +162,26 @@ const CommissionStatistics: React.FC = () => {
           disable={isLoading}
           saleLevel={user?.SaleLevel?.level}
         />
+      </div>
+
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Title level={4}>Hoa hồng từ đăng ký</Title>
+          <Space>
+            <Text>Tổng:</Text>
+            <Text strong>{Number(totalSub).toLocaleString()}</Text>
+          </Space>
+        </div>
+        {/* <Result total={total} isButtonExcel={false} /> */}
+        <div className="">
+          <Table
+            columns={Column()}
+            dataSource={listSub}
+            scroll={{ x: 'max-content', y: '100%' }}
+            style={{ height: 'auto' }}
+            loading={isLoading}
+          />
+        </div>
       </div>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

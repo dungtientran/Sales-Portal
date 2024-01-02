@@ -62,6 +62,8 @@ const BlockContract: React.FC = () => {
 
   const [total, setTotal] = useState(0);
 
+  const [totalCommissions, setTotalCommissions] = useState();
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['getListContractDone'],
     queryFn: () => getListContract('done'),
@@ -213,7 +215,7 @@ const BlockContract: React.FC = () => {
 
   return (
     <div className="aaa">
-      <HeadTitle title="Hợp đồng đã thanh lý" />
+      <HeadTitle title="Hợp đồng đã thanh lý " />
       {/* <div style={{ display: 'flex', textAlign: 'center', justifyContent: 'center' }}>
         <Button
           onClick={() => {
@@ -237,7 +239,9 @@ const BlockContract: React.FC = () => {
         columns={Column()}
         dataSource={listContract}
         title="Danh sách hợp đồng Vip (còn hiệu lực)"
-        totalCommission={data?.total}
+        totalDirector={data?.totalDirector}
+        totalManager={data?.totalManager}
+        totalSale={data?.totalSale}
       />
       <div className="table_contract">
         <Table

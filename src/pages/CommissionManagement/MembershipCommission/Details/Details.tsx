@@ -23,6 +23,10 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { listCommissionStatistics } from '@/api/ttd_list_commission';
 import ExportExcel from '@/pages/components/button-export-excel/ExportExcel';
 
+const { getListEmployee } = listEmployeeApi;
+
+import { listEmployeeApi } from '@/api/ttd_list_employee';
+
 import { Column } from './columns';
 
 const { getDetailsMembershipCommission } = listCommissionStatistics;
@@ -32,6 +36,8 @@ const today = moment(new Date()).format('YYYY/MM');
 const disabledDate: RangePickerProps['disabledDate'] = current => {
   return current && current > dayjs().subtract(1, 'month').endOf('month');
 };
+
+const chucVU= ['Sale', "Trưởng phòng", "Giám đốc"];
 
 const Details: React.FC = () => {
   const { id } = useParams();
@@ -48,11 +54,18 @@ const Details: React.FC = () => {
   const [totalManager, setTotalManager] = useState(0);
   const [totalDirector, setTotalDirector] = useState(0);
 
+  const [details, setDetails] = useState<any>(undefined);
+
   const { user } = useSelector(state => state.user);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['getMembershipCommission', period, id],
     queryFn: () => getDetailsMembershipCommission(id as string, `${period}`),
+  });
+
+  const listStaffRessponse = useQuery({
+    queryKey: ['getListEmployee'],
+    queryFn: () => getListEmployee(),
   });
 
   useEffect(() => {
@@ -129,17 +142,43 @@ const Details: React.FC = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (listStaffRessponse?.data?.code === 200) {
+      const listStaffCustom = listStaffRessponse?.data?.data?.rows?.find((item: any) => item?.staff_code === id);
+
+      setDetails(listStaffCustom);
+      console.log("listStaffRessponse________________", listStaffCustom);
+    }
+  }, [listStaffRessponse?.data?.code]);
+
+
   return (
     <div className="aaa" style={{ padding: '0 12px' }}>
       <HeadTitle title="Chi tiết hoa hồng thành viên" />
      <Space direction='vertical' size='small'>
      <Space size="large">
-        <Title level={4}>Kỳ:</Title>
-        <Title level={3}>{moment(period).format('YYYY/MM')}</Title>
+        <Text >Kỳ:</Text>
+        <Text strong>{moment(period).format('YYYY/MM')}</Text>
       </Space>
+
+      <Space>
+      <Text >Mã nhân viên:</Text>
+        <Text strong>{id}</Text>
+      </Space>
+
+      <Space>
+      <Text >Họ tên:</Text>
+        <Text strong>{details?.fullname}</Text>
+      </Space>
+
+      <Space>
+      <Text >Chức vụ:</Text>
+        <Text strong>{chucVU[details?.SaleLevel?.level]}</Text>
+      </Space>
+
       <Space size="large">
-        <Title level={4}>Tổng:</Title>
-        <Title level={3}>{data?.data?.total?.toLocaleString()}</Title>
+        <Text >Tổng:</Text>
+        <Text strong>{data?.data?.total?.toLocaleString()}</Text>
       </Space>
      </Space>
       <div>
